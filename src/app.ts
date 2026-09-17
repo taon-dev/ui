@@ -310,6 +310,33 @@ export const UiClientRoutes: Routes = [
         m => m.ManagerRoutes,
       ),
   },
+  // @app-ts-generated
+  {
+    path: 'main/routes/session/providers/provider-info',
+
+    loadChildren: () =>
+      import('./app/main/routes/session/providers/provider-info/provider-info.routes').then(
+        m => m.ProviderInfoRoutes,
+      ),
+  },
+  // @app-ts-generated
+  {
+    path: 'main/routes/session/providers/provider-items',
+
+    loadChildren: () =>
+      import('./app/main/routes/session/providers/provider-items/provider-items.routes').then(
+        m => m.ProviderItemsRoutes,
+      ),
+  },
+  // @app-ts-generated
+  {
+    path: 'main/routes/session/providers/provider-items/provider-info-comparasion',
+
+    loadChildren: () =>
+      import('./app/main/routes/session/providers/provider-items/provider-info-comparasion/provider-info-comparasion.routes').then(
+        m => m.ProviderInfoComparasionRoutes,
+      ),
+  },
 
   // uncomment this to have NOT FOUND route
   {

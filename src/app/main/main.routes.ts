@@ -11,6 +11,18 @@ export const MainRoutes: Routes = [
     component: MainContainer,
     children: [
       {
+        path: 'dashboard',
+        data: {
+          menuItem: 'Dashboard',
+          icon: 'dashboard',
+        },
+        ...adminLazyRoutes(() =>
+          import('./routes/dashboard/dashboard.routes').then(
+            m => m.DashboardRoutes,
+          ),
+        ),
+      },
+      {
         path: 'session',
         data: {
           menuItem: 'Session',
