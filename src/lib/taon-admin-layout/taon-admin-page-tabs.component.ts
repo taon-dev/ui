@@ -31,6 +31,7 @@ export interface TaonAdminTabLevel {
   standalone: true,
   imports: [RouterLink, MatTabsModule],
   templateUrl: './taon-admin-page-tabs.component.html',
+  styleUrl:'./taon-admin-page-tabs.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaonAdminPageTabsComponent implements OnInit {
