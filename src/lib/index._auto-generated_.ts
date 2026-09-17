@@ -9,3 +9,4 @@ export * from './start-cli';
 export * from './i18n/lib.translation'; 
 export * from './taon-admin-layout/taon-admin-layout.component'; // @browser
 export * from './taon-admin-layout/taon-admin-layout.models'; 
+export * from './taon-admin-layout/taon-base-admin-page.component'; // @browser

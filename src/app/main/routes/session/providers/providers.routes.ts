@@ -1,5 +1,6 @@
 //#region imports
 import { Routes } from '@angular/router';
+import { adminLazyRoutes } from '@taon-dev/ui/src';
 
 import { ProvidersComponent } from './providers.component';
 //#endregion
@@ -8,6 +9,20 @@ export const ProvidersRoutes: Routes = [
   {
     path: '',
     component: ProvidersComponent,
+    children: [
+      {
+        path: 'provider-info',
+        data: {
+          menuItem: 'Provider info tab',
+          icon: 'monitoring',
+        },
+        ...adminLazyRoutes(() =>
+          import('./provider-info/provider-info.routes').then(
+            m => m.ProviderInfoRoutes,
+          ),
+        ),
+      },
+    ],
   },
   // {
   //   path: 'anothermodulepath',

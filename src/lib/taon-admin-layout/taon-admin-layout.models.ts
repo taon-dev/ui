@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { Route, Routes } from '@angular/router';
 
 export interface TaonAdminRoute extends Route {
@@ -19,3 +20,4 @@ export function adminLazyRoutes(
     loadAdminChildren: loader,
   };
 }
+

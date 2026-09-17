@@ -20,6 +20,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 
 import { TaonAdminRoute } from './taon-admin-layout.models';
+import { TaonAdminPageTabsComponent } from './taon-admin-page-tabs.component';
 
 @Component({
   selector: 'taon-admin-layout',
@@ -31,6 +32,7 @@ import { TaonAdminRoute } from './taon-admin-layout.models';
 
     MatExpansionModule,
     MatIconModule,
+    TaonAdminPageTabsComponent,
   ],
   templateUrl: './taon-admin-layout.component.html',
   styleUrls: ['./taon-admin-layout.component.scss'],
@@ -54,6 +56,22 @@ export class TaonAdminLayoutComponent implements OnInit {
   protected readonly currentUrl = signal('');
 
   protected readonly loadingRoutes = signal(new Set<Route>());
+
+  protected readonly asideOpened = signal(window.innerWidth >= 768);
+
+  protected toggleAside(): void {
+    this.asideOpened.update(opened => !opened);
+  }
+
+  protected closeAside(): void {
+    this.asideOpened.set(false);
+  }
+
+  protected level2Clicked(): void {
+    if (window.innerWidth < 768) {
+      this.closeAside();
+    }
+  }
 
   constructor(private readonly router: Router) {}
 

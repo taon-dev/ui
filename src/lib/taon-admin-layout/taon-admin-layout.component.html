@@ -1,88 +1,126 @@
-<div class="flex h-full min-h-0 flex-col">
-  <!-- =============================================================== -->
+<div class="flex h-dvh min-h-0 flex-col overflow-hidden">
+  <!-- ============================================================= -->
   <!-- HEADER -->
-  <!-- =============================================================== -->
+  <!-- ============================================================= -->
 
-  <header class="shrink-0 border-b border-gray-200 bg-white">
-    <ng-content select="[header]" />
+  <header
+    class="flex h-16 shrink-0 items-center border-b border-gray-200 bg-white">
+    <!-- hamburger ALWAYS visible -->
+    <button
+      mat-icon-button
+      type="button"
+      aria-label="Toggle admin menu"
+      class="mx-2 shrink-0"
+      (click)="toggleAside()">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <div class="min-w-0 flex-1">
+      <ng-content select="[header]" />
+    </div>
   </header>
 
-  <!-- =============================================================== -->
+  <!-- ============================================================= -->
   <!-- BODY -->
-  <!-- =============================================================== -->
+  <!-- ============================================================= -->
 
-  <div class="flex min-h-0 flex-1">
-    <!-- ============================================================= -->
-    <!-- LEFT MENU -->
-    <!-- ============================================================= -->
+  <div class="relative flex min-h-0 flex-1 overflow-hidden">
+    <!-- mobile backdrop -->
+    @if (asideOpened()) {
+      <div
+        class="absolute inset-0 z-20 bg-black/30 md:hidden"
+        (click)="closeAside()"></div>
+    }
+
+    <!-- =========================================================== -->
+    <!-- ASIDE -->
+    <!-- =========================================================== -->
 
     <aside
-      class="w-72 shrink-0 overflow-y-auto border-r border-gray-200 bg-white">
-      <mat-accordion>
-        @for (level1 of routes; track level1.path) {
-          <mat-expansion-panel
-            [expanded]="isLevel1Active(level1)"
-            (expandedChange)="panelExpanded(level1, $event)">
-            <!-- ===================================================== -->
-            <!-- LEVEL 1 -->
-            <!-- ===================================================== -->
+      class="absolute inset-y-0 left-0 z-30 flex w-72 min-h-0 flex-col border-r border-gray-200 bg-white transition-transform duration-200 md:relative md:z-auto"
+      [class.-translate-x-full]="!asideOpened()"
+      [class.translate-x-0]="asideOpened()">
+      <!-- ========================================================= -->
+      <!-- SCROLLABLE ASIDE CONTENT -->
+      <!-- ========================================================= -->
 
-            <mat-expansion-panel-header (click)="level1Clicked(level1)">
-              <mat-panel-title>
-                <div class="flex items-center gap-3">
-                  @if (icon(level1)) {
-                    <mat-icon>
-                      {{ icon(level1) }}
-                    </mat-icon>
-                  }
-
-                  <span [class.font-semibold]="isLevel1Active(level1)">
-                    {{ label(level1) }}
-                  </span>
-                </div>
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <!-- ===================================================== -->
-            <!-- LEVEL 2 -->
-            <!-- ===================================================== -->
-
-            <div class="flex flex-col gap-1">
-              @if (isLoading(level1)) {
-                <div class="px-4 py-2 text-sm text-gray-400">Loading...</div>
-              } @else {
-                @for (level2 of getLevel2Routes(level1); track level2.path) {
-                  <a
-                    [routerLink]="level2Link(level1, level2)"
-                    class="flex items-center gap-3 rounded-md px-4 py-2 text-sm transition-colors hover:bg-gray-100"
-                    [class.bg-gray-100]="isLevel2Active(level1, level2)"
-                    [class.font-semibold]="isLevel2Active(level1, level2)">
-                    @if (icon(level2)) {
+      <div class="min-h-0 flex-1 overflow-y-auto">
+        <mat-accordion>
+          @for (level1 of routes; track level1.path) {
+            <mat-expansion-panel
+              [expanded]="isLevel1Active(level1)"
+              (expandedChange)="panelExpanded(level1, $event)">
+              <mat-expansion-panel-header (click)="level1Clicked(level1)">
+                <mat-panel-title>
+                  <div class="flex items-center gap-3">
+                    @if (icon(level1)) {
                       <mat-icon>
-                        {{ icon(level2) }}
+                        {{ icon(level1) }}
                       </mat-icon>
                     }
 
-                    <span>
-                      {{ label(level2) }}
+                    <span [class.font-semibold]="isLevel1Active(level1)">
+                      {{ label(level1) }}
                     </span>
-                  </a>
+                  </div>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              <!-- LEVEL 2 -->
+
+              <div class="flex flex-col gap-1">
+                @if (isLoading(level1)) {
+                  <div class="px-4 py-2 text-sm text-gray-400">Loading...</div>
+                } @else {
+                  @for (level2 of getLevel2Routes(level1); track level2.path) {
+                    <a
+                      [routerLink]="level2Link(level1, level2)"
+                      (click)="level2Clicked()"
+                      class="flex items-center gap-3 rounded-md px-4 py-2 text-sm transition-colors hover:bg-gray-100"
+                      [class.bg-gray-100]="isLevel2Active(level1, level2)"
+                      [class.font-semibold]="isLevel2Active(level1, level2)">
+                      @if (icon(level2)) {
+                        <mat-icon>
+                          {{ icon(level2) }}
+                        </mat-icon>
+                      }
+
+                      <span>
+                        {{ label(level2) }}
+                      </span>
+                    </a>
+                  }
                 }
-              }
-            </div>
-          </mat-expansion-panel>
-        }
-      </mat-accordion>
-      <br>
-      <br>
+              </div>
+            </mat-expansion-panel>
+          }
+        </mat-accordion>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- ASIDE FOOTER - NEVER SCROLLS -->
+      <!-- ========================================================= -->
+
+      <footer class="shrink-0 border-t border-gray-200 bg-white p-3">
+        <ng-content select="[asideFooter]" />
+      </footer>
     </aside>
 
-    <!-- ============================================================= -->
-    <!-- CONTENT -->
-    <!-- ============================================================= -->
+    <!-- =========================================================== -->
+    <!-- MAIN -->
+    <!-- =========================================================== -->
 
-    <main class="min-w-0 flex-1 overflow-auto p-6">
-      <router-outlet />
+    <main class="flex min-w-0 min-h-0 flex-1 flex-col overflow-hidden">
+      <!-- LEVEL 3+ -->
+      <taon-admin-page-tabs
+        class="shrink-0"
+        [routes]="routes"
+        [basePath]="basePath" />
+
+      <!-- ONLY THIS PART SCROLLS -->
+      <div class="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
+        <router-outlet />
+      </div>
     </main>
   </div>
 </div>

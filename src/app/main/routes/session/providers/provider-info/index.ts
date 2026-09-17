@@ -1,0 +1,1 @@
+export * from './provider-info.component'; // @browser
