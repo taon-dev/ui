@@ -269,6 +269,15 @@ export const UiClientRoutes: Routes = [
   },
   // @app-ts-generated
   {
+    path: 'main/routes/dashboard',
+
+    loadChildren: () =>
+      import('./app/main/routes/dashboard/dashboard.routes').then(
+        m => m.DashboardRoutes,
+      ),
+  },
+  // @app-ts-generated
+  {
     path: 'main/routes/session',
 
     loadChildren: () =>

@@ -15,6 +15,7 @@ export const MainRoutes: Routes = [
         data: {
           menuItem: 'Dashboard',
           icon: 'dashboard',
+          expandable: false,
         },
         ...adminLazyRoutes(() =>
           import('./routes/dashboard/dashboard.routes').then(

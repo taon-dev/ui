@@ -313,7 +313,11 @@ export class TaonAdminLayoutComponent implements OnInit {
     return current.slice(base.length);
   }
 
-  private get normalizedBasePath(): string {
+  protected isExpandable(route: Route): boolean {
+    return route.data?.['expandable'] !== false;
+  }
+
+  protected get normalizedBasePath(): string {
     const value = '/' + this.basePath.split('/').filter(Boolean).join('/');
 
     return value === '/' ? '/' : value;

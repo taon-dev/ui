@@ -10,7 +10,7 @@
       mat-icon-button
       type="button"
       aria-label="Toggle admin menu"
-      class="mx-2 shrink-0"
+      class="mx-2 shrink-0 cursor-pointer"
       (click)="toggleAside()">
       <mat-icon>menu</mat-icon>
     </button>
@@ -37,62 +37,94 @@
     <!-- =========================================================== -->
 
     <aside
-      class="absolute inset-y-0 left-0 z-30 flex w-72 min-h-0 flex-col border-r border-gray-200 bg-white transition-transform duration-200 md:relative md:z-auto"
+      class="absolute inset-y-0 left-0 z-30 flex min-h-0 flex-col border-r border-gray-200 bg-white transition-[width,transform] duration-200 md:relative md:inset-auto md:z-auto md:translate-x-0"
+      [class.w-72]="asideOpened()"
       [class.-translate-x-full]="!asideOpened()"
-      [class.translate-x-0]="asideOpened()">
+      [class.translate-x-0]="asideOpened()"
+      [class.md:w-72]="asideOpened()"
+      [class.md:w-0]="!asideOpened()"
+      [class.md:overflow-hidden]="!asideOpened()">
       <!-- ========================================================= -->
       <!-- SCROLLABLE ASIDE CONTENT -->
       <!-- ========================================================= -->
 
       <div class="min-h-0 flex-1 overflow-y-auto">
-        <mat-accordion>
+        <mat-accordion class="admin-menu">
           @for (level1 of routes; track level1.path) {
-            <mat-expansion-panel
-              [expanded]="isLevel1Active(level1)"
-              (expandedChange)="panelExpanded(level1, $event)">
-              <mat-expansion-panel-header (click)="level1Clicked(level1)">
-                <mat-panel-title>
-                  <div class="flex items-center gap-3">
-                    @if (icon(level1)) {
-                      <mat-icon>
-                        {{ icon(level1) }}
-                      </mat-icon>
-                    }
+            @if (isExpandable(level1)) {
+              <!-- ========================================================= -->
+              <!-- EXPANDABLE LEVEL 1 -->
+              <!-- ========================================================= -->
 
-                    <span [class.font-semibold]="isLevel1Active(level1)">
-                      {{ label(level1) }}
-                    </span>
-                  </div>
-                </mat-panel-title>
-              </mat-expansion-panel-header>
-
-              <!-- LEVEL 2 -->
-
-              <div class="flex flex-col gap-1">
-                @if (isLoading(level1)) {
-                  <div class="px-4 py-2 text-sm text-gray-400">Loading...</div>
-                } @else {
-                  @for (level2 of getLevel2Routes(level1); track level2.path) {
-                    <a
-                      [routerLink]="level2Link(level1, level2)"
-                      (click)="level2Clicked()"
-                      class="flex items-center gap-3 rounded-md px-4 py-2 text-sm transition-colors hover:bg-gray-100"
-                      [class.bg-gray-100]="isLevel2Active(level1, level2)"
-                      [class.font-semibold]="isLevel2Active(level1, level2)">
-                      @if (icon(level2)) {
+              <mat-expansion-panel
+                [expanded]="isLevel1Active(level1)"
+                (expandedChange)="panelExpanded(level1, $event)">
+                <mat-expansion-panel-header (click)="level1Clicked(level1)">
+                  <mat-panel-title>
+                    <div class="flex items-center gap-3">
+                      @if (icon(level1)) {
                         <mat-icon>
-                          {{ icon(level2) }}
+                          {{ icon(level1) }}
                         </mat-icon>
                       }
 
-                      <span>
-                        {{ label(level2) }}
+                      <span [class.font-semibold]="isLevel1Active(level1)">
+                        {{ label(level1) }}
                       </span>
-                    </a>
+                    </div>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="flex flex-col">
+                  @if (isLoading(level1)) {
+                    <div class="px-4 py-2 text-sm text-gray-400">
+                      Loading...
+                    </div>
+                  } @else {
+                    @for (
+                      level2 of getLevel2Routes(level1);
+                      track level2.path
+                    ) {
+                      <a
+                        [routerLink]="level2Link(level1, level2)"
+                        (click)="level2Clicked()"
+                        class="flex items-center gap-3 px-6 py-2.5 text-sm transition-colors hover:bg-gray-100"
+                        [class.bg-gray-100]="isLevel2Active(level1, level2)"
+                        [class.font-semibold]="isLevel2Active(level1, level2)">
+                        @if (icon(level2)) {
+                          <mat-icon>
+                            {{ icon(level2) }}
+                          </mat-icon>
+                        }
+
+                        {{ label(level2) }}
+                      </a>
+                    }
                   }
+                </div>
+              </mat-expansion-panel>
+            } @else {
+              <!-- ========================================================= -->
+              <!-- NON-EXPANDABLE LEVEL 1 -->
+              <!-- ========================================================= -->
+
+              <a
+                [routerLink]="[normalizedBasePath, level1.path]"
+                (click)="level2Clicked()"
+                class="flex h-14 items-center gap-3 px-6 transition-colors hover:bg-gray-100 "
+                [class.bg-gray-100]="isLevel1Active(level1)"
+                [class.font-semibold]="isLevel1Active(level1)">
+                @if (icon(level1)) {
+                  <mat-icon>
+                    {{ icon(level1) }}
+                  </mat-icon>
                 }
-              </div>
-            </mat-expansion-panel>
+
+                <span>
+                  {{ label(level1) }}
+                </span>
+              </a>
+            }
           }
         </mat-accordion>
       </div>
