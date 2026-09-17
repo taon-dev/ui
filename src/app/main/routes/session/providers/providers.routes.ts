@@ -22,6 +22,18 @@ export const ProvidersRoutes: Routes = [
           ),
         ),
       },
+      {
+        path: 'provider-items',
+        data: {
+          menuItem: 'Provider items tab',
+          icon: 'monitoring',
+        },
+        ...adminLazyRoutes(() =>
+          import('./provider-items/provider-items.routes').then(
+            m => m.ProviderItemsRoutes,
+          ),
+        ),
+      },
     ],
   },
   // {
