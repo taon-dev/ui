@@ -1,0 +1,88 @@
+<div class="flex h-full min-h-0 flex-col">
+  <!-- =============================================================== -->
+  <!-- HEADER -->
+  <!-- =============================================================== -->
+
+  <header class="shrink-0 border-b border-gray-200 bg-white">
+    <ng-content select="[header]" />
+  </header>
+
+  <!-- =============================================================== -->
+  <!-- BODY -->
+  <!-- =============================================================== -->
+
+  <div class="flex min-h-0 flex-1">
+    <!-- ============================================================= -->
+    <!-- LEFT MENU -->
+    <!-- ============================================================= -->
+
+    <aside
+      class="w-72 shrink-0 overflow-y-auto border-r border-gray-200 bg-white">
+      <mat-accordion>
+        @for (level1 of routes; track level1.path) {
+          <mat-expansion-panel
+            [expanded]="isLevel1Active(level1)"
+            (expandedChange)="panelExpanded(level1, $event)">
+            <!-- ===================================================== -->
+            <!-- LEVEL 1 -->
+            <!-- ===================================================== -->
+
+            <mat-expansion-panel-header (click)="level1Clicked(level1)">
+              <mat-panel-title>
+                <div class="flex items-center gap-3">
+                  @if (icon(level1)) {
+                    <mat-icon>
+                      {{ icon(level1) }}
+                    </mat-icon>
+                  }
+
+                  <span [class.font-semibold]="isLevel1Active(level1)">
+                    {{ label(level1) }}
+                  </span>
+                </div>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <!-- ===================================================== -->
+            <!-- LEVEL 2 -->
+            <!-- ===================================================== -->
+
+            <div class="flex flex-col gap-1">
+              @if (isLoading(level1)) {
+                <div class="px-4 py-2 text-sm text-gray-400">Loading...</div>
+              } @else {
+                @for (level2 of getLevel2Routes(level1); track level2.path) {
+                  <a
+                    [routerLink]="level2Link(level1, level2)"
+                    class="flex items-center gap-3 rounded-md px-4 py-2 text-sm transition-colors hover:bg-gray-100"
+                    [class.bg-gray-100]="isLevel2Active(level1, level2)"
+                    [class.font-semibold]="isLevel2Active(level1, level2)">
+                    @if (icon(level2)) {
+                      <mat-icon>
+                        {{ icon(level2) }}
+                      </mat-icon>
+                    }
+
+                    <span>
+                      {{ label(level2) }}
+                    </span>
+                  </a>
+                }
+              }
+            </div>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+      <br>
+      <br>
+    </aside>
+
+    <!-- ============================================================= -->
+    <!-- CONTENT -->
+    <!-- ============================================================= -->
+
+    <main class="min-w-0 flex-1 overflow-auto p-6">
+      <router-outlet />
+    </main>
+  </div>
+</div>

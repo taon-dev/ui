@@ -107,116 +107,10 @@ const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP, {
     TaonAdminModeConfigurationComponent,
     JsonPipe,
   ],
-  // // Uncomment to have simples template
-  // template: `
-  //   @if (itemsLoaded()) {
-  //     <router-outlet />
-  //   }
-  // `,
   template: `
-    <taon-admin-mode-configuration>
-      @if (itemsLoaded()) {
-        @if (navItems.length > 0) {
-          <nav
-            mat-tab-nav-bar
-            class="shadow-1"
-            [tabPanel]="tabPanel">
-            @for (item of navItems; track item.path) {
-              <a
-                mat-tab-link
-                href="javascript:void(0)"
-                [style.text-decoration]="
-                  (activePath === item.path && !forceShowBaseRootApp) ||
-                  ('/' === item.path && forceShowBaseRootApp)
-                    ? 'underline'
-                    : 'none'
-                "
-                (click)="navigateTo(item)">
-                @if (item.path === '/') {
-                  <mat-icon
-                    aria-hidden="false"
-                    aria-label="Example home icon"
-                    fontIcon="home"></mat-icon>
-                } @else {
-                  {{ item.label }}
-                }
-              </a>
-            }
-            <a
-              mat-tab-link
-              href="javascript:void(0)"
-              (click)="openSettings(200, 200)">
-              <mat-icon>settings</mat-icon>
-            </a>
-          </nav>
-
-          <mat-tab-nav-panel #tabPanel>
-            @if (!forceShowBaseRootApp) {
-              <router-outlet />
-            }
-          </mat-tab-nav-panel>
-        }
-        @if (navItems.length === 0) {
-          <nav class="shadow-1 w-full p-2">
-            <button
-              mat-icon-button
-              (click)="openDialog(200, 200)">
-              <mat-icon>settings</mat-icon>
-            </button>
-          </nav>
-        }
-
-        @if (navItems.length === 0 || forceShowBaseRootApp) {
-          <mat-card class="m-2">
-            <mat-card-content>
-              <h3>{{ t.gettext('Basic app info') }}</h3>
-              {{ t.gettext('Name') }}: ui<br />
-              {{ t.gettext('Angular version:') }} {{ angularVersion }}<br />
-              {{ t.gettext('Taon backend:') }} {{ taonMode }}<br />
-            </mat-card-content>
-          </mat-card>
-
-          <mat-card class="m-2">
-            <mat-card-content>
-              <h3>{{ exampleUserTitle() }}</h3>
-              <ul>
-                @for (user of users(); track user.id) {
-                  <li class="p-1">
-                    {{ user | json }}
-                    <button
-                      mat-flat-button
-                      (click)="deleteUser(user)">
-                      <mat-icon>delete user</mat-icon>
-                    </button>
-                  </li>
-                }
-              </ul>
-              <br />
-              <button
-                class="ml-1"
-                matButton="outlined"
-                (click)="addUser()">
-                {{ t.gettext('Add new example user with random name') }}
-              </button>
-            </mat-card-content>
-          </mat-card>
-
-          <mat-card class="m-2">
-            <mat-card-content>
-              <h3 translate>Example hello world from backend API:</h3>
-              {{ t.gettext('hello world from backend:') }}
-              <strong>{{ hello$ | async }}</strong>
-            </mat-card-content>
-          </mat-card>
-        }
-        <footer
-          class="text-center p-4 w-full select-none"
-          (click)="taonAdminService.enableDeveloperIf5Timetap()">
-          {{ t.gettext('Copyright') }} <strong>ui</strong>
-          {{ year }}
-        </footer>
-      }
-    </taon-admin-mode-configuration>
+    @if (itemsLoaded()) {
+      <router-outlet />
+    }
   `,
 })
 export class UiApp implements OnInit {
@@ -361,20 +255,74 @@ export const UiClientRoutes: Routes = [
     path: '',
     pathMatch: 'full',
     redirectTo: () => {
-      if (UiClientRoutes.length === 1) {
-        return '';
-      }
-      return UiClientRoutes.find(r => r.path !== '')!.path!;
+      return 'main';
     },
   },
   // PUT ALL ROUTES HERE
   // @placeholder-for-routes
+  // @app-ts-generated
+  {
+    path: 'main',
+
+    loadChildren: () =>
+      import('./app/main/main.routes').then(m => m.MainRoutes),
+  },
+  // @app-ts-generated
+  {
+    path: 'main/routes/session',
+
+    loadChildren: () =>
+      import('./app/main/routes/session/session.routes').then(
+        m => m.SessionRoutes,
+      ),
+  },
+  // @app-ts-generated
+  {
+    path: 'main/routes/users',
+
+    loadChildren: () =>
+      import('./app/main/routes/users/users.routes').then(m => m.UsersRoutes),
+  },
+  // @app-ts-generated
+  {
+    path: 'main/routes/session/providers',
+
+    loadChildren: () =>
+      import('./app/main/routes/session/providers/providers.routes').then(
+        m => m.ProvidersRoutes,
+      ),
+  },
+  // @app-ts-generated
+  {
+    path: 'main/routes/session/tracking',
+
+    loadChildren: () =>
+      import('./app/main/routes/session/tracking/tracking.routes').then(
+        m => m.TrackingRoutes,
+      ),
+  },
+  // @app-ts-generated
+  {
+    path: 'main/routes/users/manager',
+
+    loadChildren: () =>
+      import('./app/main/routes/users/manager/manager.routes').then(
+        m => m.ManagerRoutes,
+      ),
+  },
 
   // uncomment this to have NOT FOUND route
-  // {
-  //   path: '**',
-  //   component: TaonNotFoundComponent,
-  // },
+  {
+    path: 'main',
+    providers: [
+      {
+        provide: TAON_CONTEXT,
+        useFactory: () => UiContext,
+      },
+    ],
+    loadChildren: () =>
+      import('./app/main/main.routes').then(m => m.MainRoutes),
+  },
 ];
 //#endregion
 //#endregion
