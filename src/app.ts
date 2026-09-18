@@ -46,6 +46,7 @@ import Aura from '@primeng/themes/aura'; // @browser
 import { Translation, TranslationManager } from '@taon-dev/i18n/src';
 // TranslationManager.globalDefautlLanguageOverride = 'pl-PL';
 import { TranslateDirective } from '@taon-dev/i18n/src'; // @browser
+import { TaonDraggableButtonPanelComponent } from '@taon-dev/ui/src'; // @browser
 import { providePrimeNG } from 'primeng/config'; // @browser
 import { BehaviorSubject, Observable, map, switchMap } from 'rxjs';
 import {
@@ -106,10 +107,15 @@ const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP, {
     TranslateDirective,
     TaonAdminModeConfigurationComponent,
     JsonPipe,
+    TaonDraggableButtonPanelComponent,
   ],
   template: `
     @if (itemsLoaded()) {
       <router-outlet />
+
+      <taon-draggable-button-panel title="Taon Admin">
+        <router-outlet name="admin" />
+      </taon-draggable-button-panel>
     }
   `,
 })
@@ -254,102 +260,12 @@ export const UiClientRoutes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: () => {
-      return 'main';
-    },
+    component: UiApp
   },
-  // PUT ALL ROUTES HERE
-  // @placeholder-for-routes
-  // @app-ts-generated
-  {
-    path: 'main',
-
-    loadChildren: () =>
-      import('./app/main/main.routes').then(m => m.MainRoutes),
-  },
-  // @app-ts-generated
-  {
-    path: 'main/routes/dashboard',
-
-    loadChildren: () =>
-      import('./app/main/routes/dashboard/dashboard.routes').then(
-        m => m.DashboardRoutes,
-      ),
-  },
-  // @app-ts-generated
-  {
-    path: 'main/routes/session',
-
-    loadChildren: () =>
-      import('./app/main/routes/session/session.routes').then(
-        m => m.SessionRoutes,
-      ),
-  },
-  // @app-ts-generated
-  {
-    path: 'main/routes/users',
-
-    loadChildren: () =>
-      import('./app/main/routes/users/users.routes').then(m => m.UsersRoutes),
-  },
-  // @app-ts-generated
-  {
-    path: 'main/routes/session/providers',
-
-    loadChildren: () =>
-      import('./app/main/routes/session/providers/providers.routes').then(
-        m => m.ProvidersRoutes,
-      ),
-  },
-  // @app-ts-generated
-  {
-    path: 'main/routes/session/tracking',
-
-    loadChildren: () =>
-      import('./app/main/routes/session/tracking/tracking.routes').then(
-        m => m.TrackingRoutes,
-      ),
-  },
-  // @app-ts-generated
-  {
-    path: 'main/routes/users/manager',
-
-    loadChildren: () =>
-      import('./app/main/routes/users/manager/manager.routes').then(
-        m => m.ManagerRoutes,
-      ),
-  },
-  // @app-ts-generated
-  {
-    path: 'main/routes/session/providers/provider-info',
-
-    loadChildren: () =>
-      import('./app/main/routes/session/providers/provider-info/provider-info.routes').then(
-        m => m.ProviderInfoRoutes,
-      ),
-  },
-  // @app-ts-generated
-  {
-    path: 'main/routes/session/providers/provider-items',
-
-    loadChildren: () =>
-      import('./app/main/routes/session/providers/provider-items/provider-items.routes').then(
-        m => m.ProviderItemsRoutes,
-      ),
-  },
-  // @app-ts-generated
-  {
-    path: 'main/routes/session/providers/provider-items/provider-info-comparasion',
-
-    loadChildren: () =>
-      import('./app/main/routes/session/providers/provider-items/provider-info-comparasion/provider-info-comparasion.routes').then(
-        m => m.ProviderInfoComparasionRoutes,
-      ),
-  },
-
   // uncomment this to have NOT FOUND route
   {
     path: 'main',
+    outlet: 'admin',
     providers: [
       {
         provide: TAON_CONTEXT,

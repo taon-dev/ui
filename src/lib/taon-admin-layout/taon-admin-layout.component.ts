@@ -1,3 +1,5 @@
+//#region imports
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,7 +7,8 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
 import {
   NavigationEnd,
   Route,
@@ -16,12 +19,9 @@ import {
 } from '@angular/router';
 import { filter } from 'rxjs';
 
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
-
 import { TaonAdminRoute } from './taon-admin-layout.models';
 import { TaonAdminPageTabsComponent } from './taon-admin-page-tabs.component';
-
+//#endregion
 @Component({
   selector: 'taon-admin-layout',
   standalone: true,
@@ -39,11 +39,15 @@ import { TaonAdminPageTabsComponent } from './taon-admin-page-tabs.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaonAdminLayoutComponent implements OnInit {
+  //#region fields and gettrs
   @Input({ required: true })
   routes!: Routes;
 
   @Input()
   basePath = '';
+
+  @Input()
+  outlet: string;
 
   /**
    * Children discovered for each level-1 route.
@@ -59,6 +63,16 @@ export class TaonAdminLayoutComponent implements OnInit {
 
   protected readonly asideOpened = signal(window.innerWidth >= 768);
 
+  private get basePathSegments(): string[] {
+    return this.basePath.split('/').filter(Boolean);
+  }
+  //#endregion
+
+  //#region constructor
+  constructor(private readonly router: Router) {}
+  //#endregion
+
+  //#region methods
   protected toggleAside(): void {
     this.asideOpened.update(opened => !opened);
   }
@@ -67,33 +81,12 @@ export class TaonAdminLayoutComponent implements OnInit {
     this.asideOpened.set(false);
   }
 
-  protected level2Clicked(): void {
-    if (window.innerWidth < 768) {
-      this.closeAside();
-    }
-  }
-
-  constructor(private readonly router: Router) {}
-
   async ngOnInit(): Promise<void> {
-    this.currentUrl.set(this.cleanUrl(this.router.url));
-
-    /**
-     * Important for direct navigation:
-     *
-     * /main/session/providers
-     *
-     * Session panel needs to load/open automatically.
-     */
     await this.loadCurrentLevel1Route();
 
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(async event => {
-        this.currentUrl.set(
-          this.cleanUrl((event as NavigationEnd).urlAfterRedirects),
-        );
-
+      .subscribe(async () => {
         await this.loadCurrentLevel1Route();
       });
   }
@@ -107,16 +100,55 @@ export class TaonAdminLayoutComponent implements OnInit {
       return;
     }
 
-    /**
-     * Navigation itself causes Angular to lazy-load
-     * the actual route/component.
-     */
-    await this.router.navigate([this.normalizedBasePath, route.path]);
+    await this.navigateTo([route.path]);
+
+    await this.ensureLevel2Loaded(route);
+
+    if (!this.isExpandable(route)) {
+      this.closeAsideOnMobile();
+    }
+  }
+
+  protected async level2Clicked(level1: Route, level2: Route): Promise<void> {
+    if (!level1.path || !level2.path) {
+      return;
+    }
+
+    await this.navigateTo([level1.path, level2.path]);
+
+    this.closeAsideOnMobile();
+  }
+
+  private async navigateTo(routeSegments: string[]): Promise<boolean> {
+    const segments = [...this.basePathSegments, ...routeSegments];
 
     /**
-     * Separately obtain its children for our menu.
+     * Named / auxiliary outlet:
+     *
+     * /products/123(admin:main/session/providers)
      */
-    await this.ensureLevel2Loaded(route);
+    if (this.outlet) {
+      return this.router.navigate([
+        {
+          outlets: {
+            [this.outlet]: segments,
+          },
+        },
+      ]);
+    }
+
+    /**
+     * Normal primary outlet:
+     *
+     * /main/session/providers
+     */
+    return this.router.navigate(['/', ...segments]);
+  }
+
+  private closeAsideOnMobile(): void {
+    if (window.innerWidth < 768) {
+      this.closeAside();
+    }
   }
 
   protected async panelExpanded(
@@ -304,13 +336,23 @@ export class TaonAdminLayoutComponent implements OnInit {
   }
 
   private currentRelativeSegments(): string[] {
-    const url = this.currentUrl();
+    const current = this.currentOutletSegments();
 
-    const base = this.normalizedBasePath.split('/').filter(Boolean);
+    return current.slice(this.basePathSegments.length);
+  }
 
-    const current = url.split('/').filter(Boolean);
+  private currentOutletSegments(): string[] {
+    const tree = this.router.parseUrl(this.router.url);
 
-    return current.slice(base.length);
+    const outletName = this.outlet || 'primary';
+
+    const group = tree.root.children[outletName];
+
+    if (!group) {
+      return [];
+    }
+
+    return group.segments.map(segment => segment.path);
   }
 
   protected isExpandable(route: Route): boolean {
@@ -344,4 +386,5 @@ export class TaonAdminLayoutComponent implements OnInit {
       .replace(/[-_]+/g, ' ')
       .replace(/\b\w/g, char => char.toUpperCase());
   }
+  //#endregion
 }

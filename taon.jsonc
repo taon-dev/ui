@@ -11,7 +11,6 @@
   "shouldGenerateAutogenIndexFile": true,
   "generateTranslationsFor": ["en-US", "pl-PL"],
   "shouldGenerateTranslationFiles": true,
-  "shouldGenerateAutogenAppRoutesFile": true,
   "autoReleaseConfigAllowedItems": [
     {
       "artifactName": "npm-lib-and-cli-tool",

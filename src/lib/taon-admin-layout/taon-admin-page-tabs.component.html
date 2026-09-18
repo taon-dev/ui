@@ -7,8 +7,9 @@
         @for (route of level.routes; track route.path) {
           <a
             mat-tab-link
-            [routerLink]="link(level, route)"
-            [active]="isActive(level, route)">
+            class="cursor-pointer"
+            [active]="isActive(level, route)"
+            (click)="tabClicked(level, route)">
             {{ label(route) }}
           </a>
         }

@@ -25,7 +25,10 @@
   <!-- ============================================================= -->
 
   <div class="relative flex min-h-0 flex-1 overflow-hidden">
-    <!-- mobile backdrop -->
+    <!-- =========================================================== -->
+    <!-- MOBILE BACKDROP -->
+    <!-- =========================================================== -->
+
     @if (asideOpened()) {
       <div
         class="absolute inset-0 z-20 bg-black/30 md:hidden"
@@ -51,14 +54,18 @@
       <div class="min-h-0 flex-1 overflow-y-auto">
         <mat-accordion class="admin-menu">
           @for (level1 of routes; track level1.path) {
-            @if (isExpandable(level1)) {
-              <!-- ========================================================= -->
-              <!-- EXPANDABLE LEVEL 1 -->
-              <!-- ========================================================= -->
+            <!-- =================================================== -->
+            <!-- EXPANDABLE LEVEL 1 -->
+            <!-- =================================================== -->
 
+            @if (isExpandable(level1)) {
               <mat-expansion-panel
                 [expanded]="isLevel1Active(level1)"
                 (expandedChange)="panelExpanded(level1, $event)">
+                <!-- ================================================= -->
+                <!-- LEVEL 1 -->
+                <!-- ================================================= -->
+
                 <mat-expansion-panel-header (click)="level1Clicked(level1)">
                   <mat-panel-title>
                     <div class="flex items-center gap-3">
@@ -75,6 +82,10 @@
                   </mat-panel-title>
                 </mat-expansion-panel-header>
 
+                <!-- ================================================= -->
+                <!-- LEVEL 2 -->
+                <!-- ================================================= -->
+
                 <div class="flex flex-col">
                   @if (isLoading(level1)) {
                     <div class="px-4 py-2 text-sm text-gray-400">
@@ -86,9 +97,8 @@
                       track level2.path
                     ) {
                       <a
-                        [routerLink]="level2Link(level1, level2)"
-                        (click)="level2Clicked()"
-                        class="flex items-center gap-3 px-6 py-2.5 text-sm transition-colors hover:bg-gray-100"
+                        (click)="level2Clicked(level1, level2)"
+                        class="flex cursor-pointer items-center gap-3 px-6 py-2.5 text-sm transition-colors hover:bg-gray-100"
                         [class.bg-gray-100]="isLevel2Active(level1, level2)"
                         [class.font-semibold]="isLevel2Active(level1, level2)">
                         @if (icon(level2)) {
@@ -97,21 +107,22 @@
                           </mat-icon>
                         }
 
-                        {{ label(level2) }}
+                        <span>
+                          {{ label(level2) }}
+                        </span>
                       </a>
                     }
                   }
                 </div>
               </mat-expansion-panel>
             } @else {
-              <!-- ========================================================= -->
+              <!-- ================================================= -->
               <!-- NON-EXPANDABLE LEVEL 1 -->
-              <!-- ========================================================= -->
+              <!-- ================================================= -->
 
               <a
-                [routerLink]="[normalizedBasePath, level1.path]"
-                (click)="level2Clicked()"
-                class="flex h-14 items-center gap-3 px-6 transition-colors hover:bg-gray-100 "
+                (click)="level1Clicked(level1)"
+                class="flex h-14 cursor-pointer items-center gap-3 px-6 transition-colors hover:bg-gray-100"
                 [class.bg-gray-100]="isLevel1Active(level1)"
                 [class.font-semibold]="isLevel1Active(level1)">
                 @if (icon(level1)) {
@@ -130,7 +141,7 @@
       </div>
 
       <!-- ========================================================= -->
-      <!-- ASIDE FOOTER - NEVER SCROLLS -->
+      <!-- ASIDE FOOTER - ALWAYS VISIBLE -->
       <!-- ========================================================= -->
 
       <footer class="shrink-0 border-t border-gray-200 bg-white p-3">
@@ -142,14 +153,21 @@
     <!-- MAIN -->
     <!-- =========================================================== -->
 
-    <main class="flex min-w-0 min-h-0 flex-1 flex-col overflow-hidden">
-      <!-- LEVEL 3+ -->
+    <main class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+      <!-- ========================================================= -->
+      <!-- LEVEL 3+ TABS -->
+      <!-- ========================================================= -->
+
       <taon-admin-page-tabs
         class="shrink-0"
         [routes]="routes"
-        [basePath]="basePath" />
+        [basePath]="basePath"
+        [outlet]="outlet" />
 
-      <!-- ONLY THIS PART SCROLLS -->
+      <!-- ========================================================= -->
+      <!-- ROUTER CONTENT -->
+      <!-- ========================================================= -->
+
       <div class="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
         <router-outlet />
       </div>

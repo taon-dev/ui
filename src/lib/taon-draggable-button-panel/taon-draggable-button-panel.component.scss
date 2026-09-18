@@ -1,0 +1,61 @@
+:host {
+  display: contents;
+}
+
+.taon-draggable-panel {
+  position: fixed;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 320px;
+  min-height: 240px;
+
+  overflow: hidden;
+
+  background: white;
+
+  border: 1px solid #e5e7eb;
+
+  box-shadow: 0 20px 50px rgb(0 0 0 / 15%);
+
+  z-index: 1000;
+}
+
+.taon-window {
+  width: 50vw;
+  height: 50vh;
+
+  left: 25vw;
+  top: 25vh;
+
+  border-radius: 6px;
+}
+
+.taon-fullscreen {
+  width: 100vw;
+  height: 100dvh;
+
+  left: 0;
+  top: 0;
+
+  border-radius: 0;
+}
+
+.taon-window-bar {
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+
+  flex-shrink: 0;
+
+  padding-left: 12px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  background: #fafafa;
+
+  user-select: none;
+  cursor: move;
+}
