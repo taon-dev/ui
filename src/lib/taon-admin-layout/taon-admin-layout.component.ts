@@ -119,6 +119,20 @@ export class TaonAdminLayoutComponent implements OnInit {
     this.closeAsideOnMobile();
   }
 
+  private outletBaseMatrixParams(): Record<string, string> {
+    if (!this.outlet) {
+      return {};
+    }
+
+    const tree = this.router.parseUrl(this.router.url);
+
+    const outletGroup = tree.root.children[this.outlet];
+
+    return {
+      ...outletGroup?.segments[0]?.parameters,
+    };
+  }
+
   private async navigateTo(routeSegments: string[]): Promise<boolean> {
     const segments = [...this.basePathSegments, ...routeSegments];
 
@@ -127,11 +141,30 @@ export class TaonAdminLayoutComponent implements OnInit {
      *
      * /products/123(admin:main/session/providers)
      */
+
     if (this.outlet) {
+      const [firstSegment, ...remainingSegments] = segments;
+
+      if (!firstSegment) {
+        return false;
+      }
+
+      const matrixParams = this.outletBaseMatrixParams();
+
       return this.router.navigate([
         {
           outlets: {
-            [this.outlet]: segments,
+            [this.outlet]: [
+              firstSegment,
+
+              /**
+               * Angular interprets an object following
+               * a segment as matrix parameters.
+               */
+              matrixParams,
+
+              ...remainingSegments,
+            ],
           },
         },
       ]);
