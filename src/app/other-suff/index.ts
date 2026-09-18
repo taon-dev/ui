@@ -1,0 +1,1 @@
+export * from './other-suff.component'; // @browser

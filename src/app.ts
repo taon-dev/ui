@@ -113,7 +113,7 @@ const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP, {
     @if (itemsLoaded()) {
       <router-outlet />
 
-      <taon-draggable-button-panel title="Taon Admin">
+      <taon-draggable-button-panel title="Taon Admin" outlet="admin" basePath="main" >
         <router-outlet name="admin" />
       </taon-draggable-button-panel>
     }
@@ -260,7 +260,11 @@ export const UiClientRoutes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    component: UiApp
+    redirectTo: 'other-suff',
+  },
+  {
+    path: 'other-suff',
+    loadChildren: ()=>  import('./app/other-suff/other-suff.routes').then(m => m.OtherSuffRoutes),
   },
   // uncomment this to have NOT FOUND route
   {
