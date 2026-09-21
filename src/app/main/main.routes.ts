@@ -1,48 +1,39 @@
 //#region imports
 import { Routes } from '@angular/router';
-import { adminLazyRoutes } from '@taon-dev/ui/src';
+import { adminLazyRoute } from '@taon-dev/ui/src';
 
-import { MainContainer } from './main.container';
 //#endregion
-
 export const MainRoutes: Routes = [
   {
     path: '',
-    component: MainContainer,
+    loadComponent: () => import('./main.container').then(c => c.MainContainer),
     children: [
-      {
+      adminLazyRoute({
         path: 'dashboard',
-        data: {
-          menuItem: 'Dashboard',
-          icon: 'dashboard',
-          expandable: false,
-        },
-        ...adminLazyRoutes(() =>
+        menuItem: 'Dashboard',
+        icon: 'dashboard',
+        expandable: false,
+        loader: () =>
           import('./routes/dashboard/dashboard.routes').then(
             m => m.DashboardRoutes,
           ),
-        ),
-      },
-      {
+      }),
+
+      adminLazyRoute({
         path: 'session',
-        data: {
-          menuItem: 'Session',
-          icon: 'manage_accounts',
-        },
-        ...adminLazyRoutes(() =>
+        menuItem: 'Session',
+        icon: 'manage_accounts',
+        loader: () =>
           import('./routes/session/session.routes').then(m => m.SessionRoutes),
-        ),
-      },
-      {
+      }),
+
+      adminLazyRoute({
         path: 'users',
-        data: {
-          menuItem: 'Users',
-          icon: 'group',
-        },
-        ...adminLazyRoutes(() =>
+        menuItem: 'Users',
+        icon: 'group',
+        loader: () =>
           import('./routes/users/users.routes').then(m => m.UsersRoutes),
-        ),
-      },
+      }),
     ],
   },
 ];

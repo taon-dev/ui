@@ -1,13 +1,12 @@
 //#region imports
 import { Routes } from '@angular/router';
-
-import { ManagerComponent } from './manager.component';
 //#endregion
 
 export const ManagerRoutes: Routes = [
   {
     path: '',
-    component: ManagerComponent,
+    loadComponent: () =>
+      import('./manager.component').then(c => c.ManagerComponent),
   },
   // {
   //   path: 'anothermodulepath',

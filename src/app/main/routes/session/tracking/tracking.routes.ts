@@ -1,13 +1,13 @@
 //#region imports
 import { Routes } from '@angular/router';
 
-import { TrackingComponent } from './tracking.component';
 //#endregion
 
 export const TrackingRoutes: Routes = [
   {
     path: '',
-    component: TrackingComponent,
+    loadComponent: () =>
+      import('./tracking.component').then(c => c.TrackingComponent),
   },
   // {
   //   path: 'anothermodulepath',

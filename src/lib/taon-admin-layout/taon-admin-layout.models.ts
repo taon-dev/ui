@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { Route, Routes } from '@angular/router';
+import { Route } from '@angular/router';
 
 export interface TaonAdminRoute extends Route {
   /**
@@ -12,12 +11,35 @@ export interface TaonAdminRoute extends Route {
 
 export type TaonAdminRoutes = TaonAdminRoute[];
 
-export function adminLazyRoutes(
-  loader: () => Promise<TaonAdminRoutes>,
-): Pick<TaonAdminRoute, 'loadChildren' | 'loadAdminChildren'> {
+export interface TaonAdminRouteOptions {
+  path: string;
+
+  loader: () => Promise<TaonAdminRoutes>;
+
+  menuItem?: string;
+
+  icon?: string;
+
+  expandable?: boolean;
+
+  hideInNavigation?: boolean;
+}
+
+export function adminLazyRoute(options: TaonAdminRouteOptions): TaonAdminRoute {
+  const { path, loader, menuItem, icon, expandable, hideInNavigation } =
+    options;
+
   return {
+    path,
+
+    data: {
+      menuItem,
+      icon,
+      expandable,
+      hideInNavigation,
+    },
+
     loadChildren: loader,
     loadAdminChildren: loader,
   };
 }
-

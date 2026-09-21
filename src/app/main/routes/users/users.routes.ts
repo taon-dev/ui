@@ -1,25 +1,21 @@
 //#region imports
 import { Routes } from '@angular/router';
-import { adminLazyRoutes } from '@taon-dev/ui/src';
+import { adminLazyRoute } from '@taon-dev/ui/src';
 
-import { UsersComponent } from './users.component';
 //#endregion
 
 export const UsersRoutes: Routes = [
   {
     path: '',
-    component: UsersComponent,
+    loadComponent: () => import('./users.component').then(c => c.UsersComponent),
     children: [
-      {
+      adminLazyRoute({
         path: 'manager',
-        data: {
-          menuItem: 'Manager',
-          icon: 'admin_panel_settings',
-        },
-        ...adminLazyRoutes(() =>
+        menuItem: 'Manager',
+        icon: 'admin_panel_settings',
+        loader: () =>
           import('./manager/manager.routes').then(m => m.ManagerRoutes),
-        ),
-      },
+      }),
     ],
   },
   // {

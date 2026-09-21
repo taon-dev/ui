@@ -1,13 +1,12 @@
 //#region imports
 import { Routes } from '@angular/router';
-
-import { DashboardComponent } from './dashboard.component';
 //#endregion
 
 export const DashboardRoutes: Routes = [
   {
     path: '',
-    component: DashboardComponent,
+    loadComponent: () =>
+      import('./dashboard.component').then(c => c.DashboardComponent),
   },
   // {
   //   path: 'anothermodulepath',

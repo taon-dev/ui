@@ -1,13 +1,13 @@
 //#region imports
 import { Routes } from '@angular/router';
 
-import { ProviderInfoComponent } from './provider-info.component';
 //#endregion
 
 export const ProviderInfoRoutes: Routes = [
   {
     path: '',
-    component: ProviderInfoComponent,
+    loadComponent: () =>
+      import('./provider-info.component').then(c => c.ProviderInfoComponent),
   },
   // {
   //   path: 'anothermodulepath',

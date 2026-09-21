@@ -1,27 +1,26 @@
 //#region imports
 import { Routes } from '@angular/router';
-import { adminLazyRoutes } from '@taon-dev/ui/src';
+import { adminLazyRoute } from '@taon-dev/ui/src';
 
-import { ProviderItemsComponent } from './provider-items.component';
 //#endregion
 
 export const ProviderItemsRoutes: Routes = [
   {
     path: '',
-    component: ProviderItemsComponent,
+    loadComponent: () =>
+      import('./provider-items.component').then(c => c.ProviderItemsComponent),
     children: [
-      {
+      adminLazyRoute({
         path: 'provider-info-comparasion',
-        data: {
-          menuItem: 'Provider comprasion tab',
-          icon: 'monitoring',
-        },
-        ...adminLazyRoutes(() =>
+
+        menuItem: 'Provider comprasion tab',
+        icon: 'monitoring',
+
+        loader: () =>
           import('./provider-info-comparasion/provider-info-comparasion.routes').then(
             m => m.ProviderInfoComparasionRoutes,
           ),
-        ),
-      },
+      }),
     ],
   },
   // {
@@ -36,4 +35,4 @@ export const ProviderItemsRoutes: Routes = [
  * the command `taon generate:app:routes`
  * will automatically add them to the root routes in ./src/app.ts.
  */
-export default ProviderItemsRoutes;
+// export default ProviderItemsRoutes;

@@ -1,6 +1,6 @@
 //#region imports
 import { Routes } from '@angular/router';
-import { adminLazyRoutes } from '@taon-dev/ui/src';
+import { adminLazyRoute } from '@taon-dev/ui/src';
 
 import { SessionComponent } from './session.component';
 //#endregion
@@ -10,26 +10,20 @@ export const SessionRoutes: Routes = [
     path: '',
     component: SessionComponent,
     children: [
-      {
+      adminLazyRoute({
         path: 'tracking',
-        data: {
-          menuItem: 'Tracking',
-          icon: 'monitoring',
-        },
-        ...adminLazyRoutes(() =>
+        menuItem: 'Tracking',
+        icon: 'monitoring',
+        loader: () =>
           import('./tracking/tracking.routes').then(m => m.TrackingRoutes),
-        ),
-      },
-      {
+      }),
+      adminLazyRoute({
         path: 'providers',
-        data: {
-          menuItem: 'Providers',
-          icon: 'dns',
-        },
-        ...adminLazyRoutes(() =>
+        menuItem: 'Providers',
+        icon: 'dns',
+        loader: () =>
           import('./providers/providers.routes').then(m => m.ProvidersRoutes),
-        ),
-      },
+      }),
     ],
   },
 ];
