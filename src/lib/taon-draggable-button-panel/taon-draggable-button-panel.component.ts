@@ -18,6 +18,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter, firstValueFrom, Subscription, take } from 'rxjs';
 
 import { TaonDraggableButtonPanelState } from './taon-draggable-button-panel.models';
+import { NgIf } from '@angular/common';
 //#endregion
 
 @Component({
@@ -26,7 +27,7 @@ import { TaonDraggableButtonPanelState } from './taon-draggable-button-panel.mod
   imports: [
     CdkDrag,
     CdkDragHandle,
-
+    NgIf,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
@@ -76,6 +77,20 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
   @Output()
   readonly stateChange = new EventEmitter<TaonDraggableButtonPanelState>();
 
+  protected readonly forceFullScreen = signal(window.innerWidth < 900);
+
+  private readonly resizeListener = (): void => {
+    const wasForceFullScreen = this.forceFullScreen();
+    const forceFullScreen = window.innerWidth < 900;
+
+    this.forceFullScreen.set(forceFullScreen);
+
+    // Desktop -> mobile: remove old CDK drag x/y transform.
+    if (!wasForceFullScreen && forceFullScreen) {
+      this.resetDragPosition();
+    }
+  };
+
   protected readonly currentState = signal(
     TaonDraggableButtonPanelState.CLICKABLE_BUTTON,
   );
@@ -85,6 +100,7 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
   constructor(private readonly router: Router) {}
 
   async ngOnInit(): Promise<void> {
+    window.addEventListener('resize', this.resizeListener);
     /**
      * IMPORTANT:
      *
@@ -136,7 +152,19 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    window.removeEventListener('resize', this.resizeListener);
     this.routerSubscription?.unsubscribe();
+  }
+
+  protected effectiveState(): TaonDraggableButtonPanelState {
+    if (
+      this.forceFullScreen() &&
+      this.currentState() !== TaonDraggableButtonPanelState.CLICKABLE_BUTTON
+    ) {
+      return TaonDraggableButtonPanelState.FULL_SCREEN_LOCKED;
+    }
+
+    return this.currentState();
   }
 
   // ===========================================================================
@@ -269,6 +297,10 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
   }
 
   protected isDraggingEnabled(): boolean {
+    if (this.forceFullScreen()) {
+      return false;
+    }
+
     return (
       this.currentState() === TaonDraggableButtonPanelState.WINDOW ||
       this.currentState() ===

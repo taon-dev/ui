@@ -1,9 +1,7 @@
 @if (currentState() === State.CLICKABLE_BUTTON) {
-  <!-- ============================================================ -->
-  <!-- BUTTON -->
-  <!-- ============================================================ -->
-
+  <!-- #region BUTTON - works on desktop AND mobile -->
   <button
+    class="taon-admin-panel-toogle-open-button"
     mat-icon-button
     type="button"
     [matTooltip]="title"
@@ -12,24 +10,17 @@
       {{ buttonIcon }}
     </mat-icon>
   </button>
+  <!-- #endregion -->
 } @else {
-  <!-- ============================================================ -->
-  <!-- PANEL -->
-  <!-- ============================================================ -->
-
   <section
     cdkDrag
     [cdkDragDisabled]="!isDraggingEnabled()"
     class="taon-draggable-panel"
-    [class.taon-window]="currentState() === State.WINDOW"
+    [class.taon-window]="effectiveState() === State.WINDOW"
     [class.taon-fullscreen]="
-      currentState() === State.FULL_SCREEN_DRAGGABLE ||
-      currentState() === State.FULL_SCREEN_LOCKED
+      effectiveState() === State.FULL_SCREEN_DRAGGABLE ||
+      effectiveState() === State.FULL_SCREEN_LOCKED
     ">
-    <!-- ========================================================== -->
-    <!-- WINDOW BAR / DRAG HANDLE -->
-    <!-- ========================================================== -->
-
     <header
       cdkDragHandle
       class="taon-window-bar">
@@ -41,66 +32,60 @@
         </span>
       </div>
 
+      <!-- #region window buttons -->
       <div class="flex shrink-0 items-center">
-        <!-- WINDOW MODE -->
+        <!-- Desktop-only window/fullscreen controls -->
+        @if (!forceFullScreen()) {
+          @if (currentState() !== State.WINDOW) {
+            <button
+              mat-icon-button
+              type="button"
+              matTooltip="Window mode"
+              (click)="windowMode()">
+              <mat-icon>filter_none</mat-icon>
+            </button>
+          }
 
-        @if (currentState() !== State.WINDOW) {
-          <button
-            mat-icon-button
-            type="button"
-            matTooltip="Window mode"
-            (click)="windowMode()">
-            <mat-icon> filter_none </mat-icon>
-          </button>
+          @if (currentState() === State.WINDOW) {
+            <button
+              mat-icon-button
+              type="button"
+              matTooltip="Full screen"
+              (click)="fullScreenDraggable()">
+              <mat-icon>fullscreen</mat-icon>
+            </button>
+          }
+
+          @if (currentState() !== State.FULL_SCREEN_LOCKED) {
+            <button
+              mat-icon-button
+              type="button"
+              matTooltip="Lock full screen"
+              (click)="lockFullScreen()">
+              <mat-icon>lock_open</mat-icon>
+            </button>
+          } @else {
+            <button
+              mat-icon-button
+              type="button"
+              matTooltip="Unlock"
+              (click)="fullScreenDraggable()">
+              <mat-icon>lock</mat-icon>
+            </button>
+          }
         }
 
-        <!-- FULLSCREEN -->
-
-        @if (currentState() === State.WINDOW) {
-          <button
-            mat-icon-button
-            type="button"
-            matTooltip="Full screen"
-            (click)="fullScreenDraggable()">
-            <mat-icon> fullscreen </mat-icon>
-          </button>
-        }
-
-        <!-- LOCK -->
-
-        @if (currentState() !== State.FULL_SCREEN_LOCKED) {
-          <button
-            mat-icon-button
-            type="button"
-            matTooltip="Lock full screen"
-            (click)="lockFullScreen()">
-            <mat-icon> lock_open </mat-icon>
-          </button>
-        } @else {
-          <button
-            mat-icon-button
-            type="button"
-            matTooltip="Unlock"
-            (click)="fullScreenDraggable()">
-            <mat-icon> lock </mat-icon>
-          </button>
-        }
-
-        <!-- RETURN TO BUTTON -->
-
+        <!-- ALWAYS available -->
         <button
           mat-icon-button
           type="button"
           matTooltip="Close admin panel"
           (click)="returnToButton()">
-          <mat-icon> close </mat-icon>
+          <mat-icon>close</mat-icon>
         </button>
       </div>
+      <!-- #endregion -->
     </header>
-
-    <!-- ========================================================== -->
-    <!-- CONTENT -->
-    <!-- ========================================================== -->
 
     <div class="min-h-0 flex-1 overflow-hidden">
       <ng-content />
