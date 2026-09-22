@@ -1,3 +1,4 @@
+//#region imports
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import {
   ChangeDetectionStrategy,
@@ -14,9 +15,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, Subscription } from 'rxjs';
+import { filter, firstValueFrom, Subscription, take } from 'rxjs';
 
 import { TaonDraggableButtonPanelState } from './taon-draggable-button-panel.models';
+//#endregion
 
 @Component({
   selector: 'taon-draggable-button-panel',
@@ -83,10 +85,49 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
   constructor(private readonly router: Router) {}
 
   async ngOnInit(): Promise<void> {
+    /**
+     * IMPORTANT:
+     *
+     * The component may be created while Angular is still processing
+     * the application's initial navigation.
+     *
+     * For example:
+     *
+     *   / -> redirectTo: /app
+     *
+     * If we create:
+     *
+     *   (admin:main)
+     *
+     * before that redirect finishes, the auxiliary outlet navigation
+     * may effectively replace/interfere with the primary navigation,
+     * producing:
+     *
+     *   /(admin:main)
+     *
+     * instead of:
+     *
+     *   /app(admin:main)
+     */
+    await this.waitForInitialNavigation();
+
+    /**
+     * Ensure the auxiliary outlet exists only AFTER the primary
+     * application route has settled.
+     */
     await this.ensureOutletBasePath();
 
+    /**
+     * The outlet may already contain persisted state, e.g.
+     *
+     * (admin:main;state=WINDOW/dashboard)
+     */
     this.restoreStateFromUrl();
 
+    /**
+     * From this point on keep the component state synchronized
+     * with subsequent router navigations.
+     */
     this.routerSubscription = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -98,18 +139,58 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
     this.routerSubscription?.unsubscribe();
   }
 
+  // ===========================================================================
+  // INITIAL ROUTING
+  // ===========================================================================
+
+  private async waitForInitialNavigation(): Promise<void> {
+    /**
+     * Router already completed at least one navigation.
+     */
+    if (this.router.navigated) {
+      return;
+    }
+
+    /**
+     * Wait until redirects/lazy routing/etc. belonging to the initial
+     * navigation have settled.
+     */
+    await firstValueFrom(
+      this.router.events.pipe(
+        filter(event => event instanceof NavigationEnd),
+        take(1),
+      ),
+    );
+  }
+
   private async ensureOutletBasePath(): Promise<void> {
     if (!this.outlet || !this.basePath) {
       return;
     }
 
+    /**
+     * IMPORTANT:
+     *
+     * Parse the URL only AFTER initial navigation has completed.
+     *
+     * At this point:
+     *
+     *   /
+     *
+     * may already have become:
+     *
+     *   /app
+     */
     const tree = this.router.parseUrl(this.router.url);
 
     /**
-     * Outlet already exists — don't touch it.
+     * Outlet already exists — preserve it exactly as it is.
      *
-     * For example:
-     * (admin:main/session/providers)
+     * Examples:
+     *
+     *   /app(admin:main)
+     *
+     *   /app(admin:main;state=WINDOW/dashboard)
      */
     if (tree.root.children[this.outlet]) {
       return;
@@ -121,6 +202,18 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
       return;
     }
 
+    /**
+     * Add the auxiliary outlet while preserving the current
+     * primary route.
+     *
+     * Example:
+     *
+     *   /app
+     *
+     * becomes:
+     *
+     *   /app(admin:main)
+     */
     await this.router.navigate(
       [
         {
@@ -201,11 +294,11 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * We store the panel state on the first segment:
+     * State is stored on the first auxiliary outlet segment:
      *
      * admin:
      *
-     * main;state=WINDOW/session/providers
+     * main;state=WINDOW/dashboard
      * └────────────────┘
      */
     const rootSegment = outletGroup.segments[0];
@@ -221,16 +314,15 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * URL restoration should NOT go through
-     * the transition state machine.
+     * URL restoration should NOT go through the transition
+     * state machine.
      *
-     * A bookmarked URL is authoritative.
+     * A bookmarked/refreshed URL is authoritative.
      */
     this.currentState.set(state);
 
     /**
-     * Fullscreen must never inherit an old
-     * CdkDrag transform.
+     * Fullscreen must never inherit an old CdkDrag transform.
      */
     if (
       state === TaonDraggableButtonPanelState.FULL_SCREEN_DRAGGABLE ||
@@ -256,8 +348,8 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
     /**
      * The outlet might not yet exist.
      *
-     * In that case there is nowhere sensible
-     * to attach its matrix parameter.
+     * In that case there is nowhere sensible to attach
+     * its matrix parameter.
      */
     if (!outletGroup || outletGroup.segments.length === 0) {
       return;
@@ -266,7 +358,7 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
     const rootSegment = outletGroup.segments[0];
 
     /**
-     * Preserve any existing matrix params.
+     * Preserve any existing matrix parameters.
      */
     rootSegment.parameters = {
       ...rootSegment.parameters,
