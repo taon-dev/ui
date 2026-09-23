@@ -350,6 +350,10 @@ export class TaonAdminLayoutComponent implements OnInit {
     return route.data?.['menuItem'] ?? this.startCase(route.path ?? '');
   }
 
+  protected color(route: Route): string {
+    return route.data?.['color'];
+  }
+
   protected icon(route: Route): string | undefined {
     return route.data?.['icon'];
   }

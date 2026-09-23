@@ -70,12 +70,14 @@
                   <mat-panel-title>
                     <div class="flex items-center gap-3">
                       @if (icon(level1)) {
-                        <mat-icon>
+                        <mat-icon [ngStyle]="{ color: color(level1) }">
                           {{ icon(level1) }}
                         </mat-icon>
                       }
 
-                      <span [class.font-semibold]="isLevel1Active(level1)">
+                      <span
+                        [class.font-semibold]="isLevel1Active(level1)"
+                        [ngStyle]="{ color: color(level1) }">
                         {{ label(level1) }}
                       </span>
                     </div>
@@ -102,12 +104,12 @@
                         [class.bg-gray-100]="isLevel2Active(level1, level2)"
                         [class.font-semibold]="isLevel2Active(level1, level2)">
                         @if (icon(level2)) {
-                          <mat-icon>
+                          <mat-icon [ngStyle]="{ color: color(level2) }">
                             {{ icon(level2) }}
                           </mat-icon>
                         }
 
-                        <span>
+                        <span [ngStyle]="{ color: color(level2) }">
                           {{ label(level2) }}
                         </span>
                       </a>
@@ -126,12 +128,12 @@
                 [class.bg-gray-100]="isLevel1Active(level1)"
                 [class.font-semibold]="isLevel1Active(level1)">
                 @if (icon(level1)) {
-                  <mat-icon>
+                  <mat-icon [ngStyle]="{ color: color(level1) }">
                     {{ icon(level1) }}
                   </mat-icon>
                 }
 
-                <span>
+                <span [ngStyle]="{ color: color(level1) }">
                   {{ label(level1) }}
                 </span>
               </a>

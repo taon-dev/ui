@@ -103,11 +103,12 @@ type MaterialIcon =
   | 'tune'
   | 'apps'
   | 'widgets'
-  | 'category';
+  | 'category'
+  | 'supervisor_account';
 
 export interface TaonAdminRouteOptions {
   path: string;
-
+  color?: string;
   loader: () => Promise<TaonAdminRoutes>;
 
   menuItem?: string;
@@ -120,7 +121,7 @@ export interface TaonAdminRouteOptions {
 }
 
 export function adminLazyRoute(options: TaonAdminRouteOptions): TaonAdminRoute {
-  const { path, loader, menuItem, icon, expandable, hideInNavigation } =
+  const { path, loader, menuItem, icon, color, expandable, hideInNavigation } =
     options;
 
   return {
@@ -128,6 +129,7 @@ export function adminLazyRoute(options: TaonAdminRouteOptions): TaonAdminRoute {
 
     data: {
       menuItem,
+      color,
       icon,
       expandable,
       hideInNavigation,
