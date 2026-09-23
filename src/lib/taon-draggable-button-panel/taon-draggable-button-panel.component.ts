@@ -1,5 +1,6 @@
 //#region imports
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
+import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,7 +19,6 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter, firstValueFrom, Subscription, take } from 'rxjs';
 
 import { TaonDraggableButtonPanelState } from './taon-draggable-button-panel.models';
-import { NgIf } from '@angular/common';
 //#endregion
 
 @Component({
@@ -154,6 +154,27 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.resizeListener);
     this.routerSubscription?.unsubscribe();
+  }
+
+  protected toogleFullscreen(event: Event) {
+    event.stopImmediatePropagation();
+    event.stopPropagation();
+    event.preventDefault();
+    if (this.forceFullScreen()) {
+      return;
+    }
+    if (this.currentState() === TaonDraggableButtonPanelState.WINDOW) {
+      this.resetDragPosition();
+      void this.setState(TaonDraggableButtonPanelState.FULL_SCREEN_LOCKED);
+    } else if (
+      [
+        TaonDraggableButtonPanelState.FULL_SCREEN_DRAGGABLE,
+        TaonDraggableButtonPanelState.FULL_SCREEN_LOCKED,
+      ].includes(this.currentState())
+    ) {
+      this.resetDragPosition();
+      void this.setState(TaonDraggableButtonPanelState.WINDOW);
+    }
   }
 
   protected effectiveState(): TaonDraggableButtonPanelState {

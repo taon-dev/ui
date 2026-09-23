@@ -11,9 +11,6 @@ export * from './taon-admin-layout/taon-admin-layout.component'; // @browser
 export * from './taon-admin-layout/taon-admin-layout.models'; 
 export * from './taon-admin-layout/taon-admin-page-tabs.component'; // @browser
 export * from './taon-admin-layout/taon-base-admin-page.component'; // @browser
-export * from './taon-backoffice/taon-backoffice.component'; // @browser
-export * from './taon-backoffice/taon-backoffice.models'; 
-export * from './taon-backoffice/taon-backoffice.routes'; // @browser
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.component'; // @browser
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.models'; 
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.routes'; // @browser
