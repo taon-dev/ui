@@ -1,4 +1,7 @@
-<router-outlet></router-outlet>
-<p>
-  tracking works!
-</p>
+<taon-datatable
+  [entityCrudController]="crud"
+  [columns]="columns"
+  [allowedColumns]="['id', 'name']"
+  searchMode="advanced"
+  (addingItem)="add()">
+</taon-datatable>

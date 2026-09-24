@@ -385,6 +385,12 @@ class UserMigration extends TaonBaseMigration {
     const superAdmin = new User();
     superAdmin.name = 'super-admin';
     await this.userController.save(superAdmin);
+
+    for (let index = 0; index < 30; index++) {
+      const newUser = new User();
+      newUser.name = `admin${index}${index % 4 === 0 ? 'special' : ''}`;
+      await this.userController.save(newUser);
+    }
   }
 }
 //#endregion

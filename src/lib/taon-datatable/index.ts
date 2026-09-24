@@ -1,0 +1,1 @@
+export * from './taon-datatable.component'; // @browser

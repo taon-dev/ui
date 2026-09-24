@@ -1,0 +1,147 @@
+<div class="flex w-full flex-col gap-3">
+  <!-- toolbar -->
+  @if (!hideSearch) {
+    <div
+      class="flex w-full flex-col gap-2 rounded-lg border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-700 dark:bg-gray-900 md:flex-row md:items-center">
+      <!-- global search -->
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic"
+        class="min-w-0 flex-1">
+        <mat-icon matPrefix> search </mat-icon>
+
+        <input
+          matInput
+          placeholder="Search..."
+          [value]="searchValue"
+          (input)="searchChanged($any($event.target).value)" />
+
+        @if (searchValue) {
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <!-- advanced search -->
+      @if (searchMode === 'advanced') {
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="toggleAdvancedSearch()">
+          <mat-icon> tune </mat-icon>
+
+          Filters
+
+          @if (advancedSearchOpened) {
+            <mat-icon> expand_less </mat-icon>
+          } @else {
+            <mat-icon> expand_more </mat-icon>
+          }
+        </button>
+      }
+
+      <!-- refresh -->
+      <button
+        mat-icon-button
+        type="button"
+        title="Refresh"
+        (click)="reload()">
+        <mat-icon> refresh </mat-icon>
+      </button>
+
+      <!-- add -->
+      @if (!hideAddButton) {
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          (click)="addingItem.emit()">
+          <mat-icon> add </mat-icon>
+
+          Add
+        </button>
+      }
+    </div>
+  }
+
+  <!-- advanced filters -->
+  @if (!hideSearch && searchMode === 'advanced' && advancedSearchOpened) {
+    <div
+      class="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      @for (column of filterableColumns; track column.field) {
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          class="w-full">
+          <mat-label>
+            {{ column.header }}
+          </mat-label>
+
+          <input
+            matInput
+            [(ngModel)]="columnFilters[$any(column.field)]"
+            (keyup.enter)="applyAdvancedFilters()" />
+        </mat-form-field>
+      }
+
+      <div
+        class="flex items-center justify-end gap-2 md:col-span-2 lg:col-span-3 xl:col-span-4">
+        <button
+          mat-button
+          type="button"
+          (click)="clearSearch()">
+          <mat-icon> filter_alt_off </mat-icon>
+
+          Clear
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          (click)="applyAdvancedFilters()">
+          <mat-icon> filter_alt </mat-icon>
+
+          Apply filters
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- grid -->
+  <div
+    class="relative min-h-[250px] overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+    @if (isLoading) {
+      <div
+        class="absolute inset-0 z-10 flex items-center justify-center bg-white/60 backdrop-blur-[1px] dark:bg-gray-900/60">
+        <div
+          class="flex items-center gap-2 rounded-md bg-white px-4 py-2 shadow dark:bg-gray-800">
+          <mat-icon class="animate-spin"> refresh </mat-icon>
+
+          Loading...
+        </div>
+      </div>
+    }
+
+    <mtx-grid
+      [data]="rows"
+      [columns]="columns"
+      [expandable]="expandable"
+      [expansionTemplate]="expansionTemplate"
+      [length]="totalElements"
+      [pageOnFront]="false"
+      [pageIndex]="pageNumber - 1"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [showPaginator]="showPaginator"
+      (expansionChange)="expansionChange.emit($event)"
+      (page)="getNextPage($event)"
+      (sortChange)="sortChanged($event)">
+    </mtx-grid>
+  </div>
+</div>
