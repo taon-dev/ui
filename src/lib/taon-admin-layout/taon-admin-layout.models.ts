@@ -104,7 +104,10 @@ type MaterialIcon =
   | 'apps'
   | 'widgets'
   | 'category'
-  | 'supervisor_account';
+  | 'supervisor_account'
+  | 'approval'
+  | 'family_group'
+  | 'recent_actors';
 
 export interface TaonAdminRouteOptions {
   path: string;

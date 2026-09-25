@@ -336,8 +336,12 @@ export class TaonDatatableComponent implements OnInit {
       map(response => this.prepareRows(response.body.json)),
 
       catchError(error => {
-        console.error('[taon-datatable] Unable to load data', error);
-
+        console.error(
+          `[taon-datatable] Unable to load data from ` +
+            `${ClassHelpers.getName(this.entityCrudController)} ${
+              this.safe ? 'paginationQuerySafe' : 'paginationQuery'
+            }`,
+        );
         return of([]);
       }),
 
