@@ -334,13 +334,14 @@ export class TaonDatatableComponent implements OnInit {
       }),
 
       map(response => this.prepareRows(response.body.json)),
-
+      // tap(console.log),
       catchError(error => {
         console.error(
           `[taon-datatable] Unable to load data from ` +
             `${ClassHelpers.getName(this.entityCrudController)} ${
               this.safe ? 'paginationQuerySafe' : 'paginationQuery'
             }`,
+          error,
         );
         return of([]);
       }),
@@ -373,17 +374,17 @@ export class TaonDatatableComponent implements OnInit {
 
   private prepareRows(rows: any[]): any[] {
     return rows.map(row => {
-      const result = {
-        ...row,
-      };
+      // const result = {
+      //   ...row,
+      // };
 
-      for (const key of Object.keys(result)) {
-        if (_.isObject(result[key])) {
-          result[key] = json5.stringify(result[key]);
-        }
-      }
+      // for (const key of Object.keys(result)) {
+      //   if (_.isObject(result[key])) {
+      //     result[key] = json5.stringify(result[key]);
+      //   }
+      // }
 
-      return result;
+      return row;
     });
   }
 

@@ -14,6 +14,8 @@ export * from './taon-admin-layout/taon-base-admin-page.component'; // @browser
 export * from './taon-backoffice-notifications/taon-backoffice-notifications.component'; // @browser
 export * from './taon-backoffice-notifications/taon-backoffice-notifications.models'; 
 export * from './taon-backoffice-notifications/taon-backoffice-notifications.service'; // @browser
+export * from './taon-backoffice-notifications/taon-error-details-dialog.component'; // @browser
+export * from './taon-backoffice-notifications/taon-error-toast.component'; // @browser
 export * from './taon-datatable/taon-datatable.component'; // @browser
 export * from './taon-datatable/taon-datatable.models'; 
 export * from './taon-datatable/taon-datatable.routes'; // @browser
