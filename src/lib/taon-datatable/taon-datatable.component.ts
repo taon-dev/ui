@@ -132,6 +132,26 @@ export class TaonDatatableComponent implements OnInit {
   @Input()
   callQueryMethod?: string;
 
+  private _data?: any[];
+
+  @Input()
+  set data(value: any[] | undefined | null) {
+    this._data = value ?? undefined;
+
+    if (this._data) {
+      this.pageNumber = 1;
+      this.reload();
+    }
+  }
+
+  get data(): any[] | undefined {
+    return this._data;
+  }
+
+  get offlineMode(): boolean {
+    return this.data !== undefined;
+  }
+
   //#endregion
 
   //#region outputs
@@ -154,7 +174,7 @@ export class TaonDatatableComponent implements OnInit {
 
   expandable = false;
 
-  showPaginator = true;
+  @Input() showPaginator: boolean;
 
   advancedSearchOpened = false;
 
@@ -193,7 +213,9 @@ export class TaonDatatableComponent implements OnInit {
     // console.log({ columns: this.columns });
     this.expandable = Boolean(this.expansionTemplate);
 
-    this.showPaginator = Boolean(this.entity);
+    this.showPaginator = _.isBoolean(this.showPaginator)
+      ? this.showPaginator
+      : Boolean(this.entity) || this.offlineMode;
 
     this.searchChange$
       .pipe(
@@ -278,9 +300,110 @@ export class TaonDatatableComponent implements OnInit {
     this.reload$.next();
   }
 
+  private getFieldValue(row: any, field: string): unknown {
+    return field.split('.').reduce((value, key) => value?.[key], row);
+  }
+
+  private loadOfflineData(): any[] {
+    let rows = [...(this.data ?? [])];
+
+    //#region global search
+
+    const search = this.searchValue.trim().toLowerCase();
+
+    if (search) {
+      rows = rows.filter(row =>
+        this.columns.some(column => {
+          if (!column.field) {
+            return false;
+          }
+
+          const value = this.getFieldValue(row, String(column.field));
+
+          return String(value ?? '')
+            .toLowerCase()
+            .includes(search);
+        }),
+      );
+    }
+
+    //#endregion
+
+    //#region column filters
+
+    const filters = this.cleanFilters(this.columnFilters);
+
+    for (const [field, filterValue] of Object.entries(filters)) {
+      const normalizedFilter = filterValue.toLowerCase();
+
+      rows = rows.filter(row => {
+        const value = this.getFieldValue(row, field);
+
+        return String(value ?? '')
+          .toLowerCase()
+          .includes(normalizedFilter);
+      });
+    }
+
+    //#endregion
+
+    //#region sorting
+
+    if (this.sort?.field && this.sort.direction) {
+      const field = String(this.sort.field);
+      const direction = this.sort.direction === 'desc' ? -1 : 1;
+
+      rows.sort((a, b) => {
+        const aValue = this.getFieldValue(a, field);
+        const bValue = this.getFieldValue(b, field);
+
+        if (aValue === bValue) {
+          return 0;
+        }
+
+        if (aValue === undefined || aValue === null) {
+          return -1 * direction;
+        }
+
+        if (bValue === undefined || bValue === null) {
+          return 1 * direction;
+        }
+
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+          return (aValue - bValue) * direction;
+        }
+
+        return (
+          String(aValue).localeCompare(String(bValue), undefined, {
+            numeric: true,
+            sensitivity: 'base',
+          }) * direction
+        );
+      });
+    }
+
+    //#endregion
+
+    //#region pagination
+
+    this.totalElements = rows.length;
+
+    const start = (this.pageNumber - 1) * this.pageSize;
+    const end = start + this.pageSize;
+
+    return this.prepareRows(rows.slice(start, end));
+
+    //#endregion
+  }
+
   private loadData(): Observable<any[]> {
+    if (this.offlineMode) {
+      return of(this.loadOfflineData());
+    }
+
     if (!this.entity || !this.entityCrudController) {
-      return of(this.rows);
+      this.totalElements = 0;
+      return of([]);
     }
 
     this.isLoading = true;
@@ -296,29 +419,29 @@ export class TaonDatatableComponent implements OnInit {
     };
 
     //#region handle info when not allowed method on controller level
+
     if (!this.safe && !this.entityCrudController.paginationQuery(query)) {
       throw new Error(
         `Please enable paginationQuery() method in your
-         controller ${ClassHelpers.getName(this.entityCrudController)}
+       controller ${ClassHelpers.getName(this.entityCrudController)}
 
-         @Controller({ allowedMethods: ['paginationQuery'] })
-         class ${ClassHelpers.getName(this.entityCrudController)} ..
-
-        `,
+       @Controller({ allowedMethods: ['paginationQuery'] })
+       class ${ClassHelpers.getName(this.entityCrudController)} ..
+      `,
       );
     }
 
     if (this.safe && !this.entityCrudController.paginationQuerySafe(query)) {
       throw new Error(
         `Please enable paginationQuerySafe() method in your controller
-         ${ClassHelpers.getName(this.entityCrudController)}
+       ${ClassHelpers.getName(this.entityCrudController)}
 
-         @Controller({ allowedMethods: ['paginationQuerySafe'] })
-         class ${ClassHelpers.getName(this.entityCrudController)} ..
-
-         `,
+       @Controller({ allowedMethods: ['paginationQuerySafe'] })
+       class ${ClassHelpers.getName(this.entityCrudController)} ..
+      `,
       );
     }
+
     //#endregion
 
     return from(
@@ -330,11 +453,10 @@ export class TaonDatatableComponent implements OnInit {
       tap(response => {
         this.totalElements =
           Number(response.headers.get(TaonSymbols.old.X_TOTAL_COUNT)) || 0;
-        // console.log({ totalElements: this.totalElements });
       }),
 
       map(response => this.prepareRows(response.body.json)),
-      // tap(console.log),
+
       catchError(error => {
         console.error(
           `[taon-datatable] Unable to load data from ` +
@@ -343,6 +465,7 @@ export class TaonDatatableComponent implements OnInit {
             }`,
           error,
         );
+
         return of([]);
       }),
 
