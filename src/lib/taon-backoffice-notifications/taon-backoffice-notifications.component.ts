@@ -43,11 +43,18 @@ export class TaonBackofficeNotificationsComponent {
         if (_.isFunction(this.filter)) {
           error = this.filter(error);
         }
-        let jsonMsg = error?.body?.json;
-        if (!jsonMsg.message) {
+
+        const jsonMsg = error?.body?.json;
+
+        if (!jsonMsg?.message) {
           console.log({ error });
         }
-        this.notification.error(jsonMsg?.message || t.gettext('Unknown error'));
+
+        this.notification.error({
+          title: jsonMsg?.message || t.gettext('Unknown error'),
+
+          details: jsonMsg?.details,
+        });
       });
   }
   //#endregion

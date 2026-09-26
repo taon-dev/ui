@@ -6,6 +6,10 @@ import {
   TaonNotificationInput,
   TaonNotificationOptions,
 } from './taon-backoffice-notifications.models';
+import {
+  TaonErrorToastComponent,
+  TaonErrorToastData,
+} from './taon-error-toast.component';
 //#endregion
 
 @Injectable({
@@ -30,9 +34,20 @@ export class TaonBackofficeNotificationsService {
   }
 
   error(input: TaonNotificationInput) {
-    const { title } = this.normalize(input);
+    const { title, details } = this.normalize(input);
 
-    return this.toast.error(title);
+    // Normal error - exactly as before
+    if (!details) {
+      return this.toast.error(title);
+    }
+
+    // Error with clickable details
+    return this.toast.error<TaonErrorToastData>(TaonErrorToastComponent, {
+      data: {
+        title,
+        details,
+      },
+    });
   }
 
   warn(input: TaonNotificationInput) {
