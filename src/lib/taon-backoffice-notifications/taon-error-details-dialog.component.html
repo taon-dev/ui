@@ -5,7 +5,26 @@
     {{ data.message }}
   </div>
 
-  <pre class="error-details"><code>{{ data.details }}</code></pre>
+  <div class="editor-selector">
+    <span class="editor-selector-label"> I am using editor: </span>
+
+    <mat-button-toggle-group
+      [value]="editor"
+      (change)="setEditor($event.value)"
+      aria-label="Code editor">
+      <mat-button-toggle value="vscode"> VS Code </mat-button-toggle>
+
+      <mat-button-toggle value="vscodium"> VSCodium </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <pre
+    class="error-details"><code>@for (stackLine of stackLines; track $index) {
+@if (stackLine.file) {<a
+  class="stack-link"
+  title="Open {{ stackLine.file }}:{{ stackLine.line }}:{{ stackLine.column }}"
+  (click)="openStackLine(stackLine)">{{ stackLine.text }}</a>} @else {{{ stackLine.text }}}{{ '\n' }}
+}</code></pre>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

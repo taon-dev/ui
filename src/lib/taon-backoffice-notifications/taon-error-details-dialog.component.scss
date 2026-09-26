@@ -3,6 +3,21 @@
   font-weight: 500;
 }
 
+//#region editor selector
+.editor-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 12px;
+}
+
+.editor-selector-label {
+  font-size: 13px;
+}
+//#endregion
+
+//#region error details
 .error-details {
   box-sizing: border-box;
   max-width: 100%;
@@ -11,7 +26,8 @@
   margin: 0;
   padding: 16px;
 
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 
   border-radius: 6px;
 
@@ -23,5 +39,24 @@
   line-height: 1.5;
 
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.stack-link {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.08);
+  }
+}
+
+.stack-line {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
+
+//#endregion
