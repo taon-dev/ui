@@ -17,6 +17,8 @@ export * from './taon-backoffice-notifications/taon-backoffice-notifications.mod
 export * from './taon-backoffice-notifications/taon-backoffice-notifications.service'; // @browser
 export * from './taon-backoffice-notifications/taon-error-details-dialog.component'; // @browser
 export * from './taon-backoffice-notifications/taon-error-toast.component'; // @browser
+export * from './taon-confirm-dialog/taon-confirm-dialog.component'; // @browser
+export * from './taon-confirm-dialog/taon-confirm-dialog.models'; 
 export * from './taon-datatable/taon-datatable.component'; // @browser
 export * from './taon-datatable/taon-datatable.models'; 
 export * from './taon-datatable/taon-datatable.routes'; // @browser
@@ -24,5 +26,3 @@ export * from './taon-draggable-button-panel/taon-draggable-button-panel.compone
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.models'; 
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.routes'; // @browser
 export * from './taon-backoffice-notifications/i18n/taon-backoffice-notifications.translation'; 
-export * from './taon-confirm-dialog/taon-confirm-dialog.component'; // @browser
-export * from './taon-confirm-dialog/taon-confirm-dialog.models'; 
