@@ -123,6 +123,8 @@ export interface TaonAdminRouteOptions {
   hideInNavigation?: boolean;
 }
 
+export const TaonBaselineBackofficeOutletName = 'admin';
+
 export function adminLazyRoute(options: TaonAdminRouteOptions): TaonAdminRoute {
   const { path, loader, menuItem, icon, color, expandable, hideInNavigation } =
     options;
