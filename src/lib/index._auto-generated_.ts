@@ -24,3 +24,5 @@ export * from './taon-draggable-button-panel/taon-draggable-button-panel.compone
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.models'; 
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.routes'; // @browser
 export * from './taon-backoffice-notifications/i18n/taon-backoffice-notifications.translation'; 
+export * from './taon-confirm-dialog/taon-confirm-dialog.component'; // @browser
+export * from './taon-confirm-dialog/taon-confirm-dialog.models'; 
