@@ -7,7 +7,7 @@ import {
   Resource,
   RestErrorResponseWrapper,
 } from 'ng2-rest/src';
-import { Taon } from 'taon/src';
+import { getHttpStatus, Taon, TaonAdminService } from 'taon/src';
 import { _ } from 'tnp-core/src';
 
 import { TaonBackofficeNotificationsService } from './taon-backoffice-notifications.service';
@@ -28,6 +28,8 @@ export class TaonBackofficeNotificationsComponent {
   private readonly notification = inject(TaonBackofficeNotificationsService);
 
   private readonly destroyRef = inject(DestroyRef);
+
+  private readonly taonAdminService = inject(TaonAdminService);
 
   @Input() filter: (
     err: HttpResponseError<RestErrorResponseWrapper>,
@@ -50,11 +52,20 @@ export class TaonBackofficeNotificationsComponent {
           console.log({ error });
         }
 
-        this.notification.error({
-          title: jsonMsg?.message || t.gettext('Unknown error'),
+        const statusCode = jsonMsg.status ?? error.statusCode;
 
-          details: jsonMsg?.details,
-        });
+        const httpStatus = getHttpStatus(statusCode, jsonMsg.message);
+        if (this.taonAdminService.shouldSkipShowingError(httpStatus)) {
+          console.log(
+            `[@taon-dev/sudo] Skipping notificaiton for message "${jsonMsg.message}" (code=${statusCode})`,
+          );
+        } else {
+          this.notification.error({
+            title: jsonMsg?.message || t.gettext('Unknown error'),
+
+            details: jsonMsg?.details,
+          });
+        }
       });
   }
   //#endregion
