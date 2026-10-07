@@ -17,6 +17,7 @@
     [cdkDragDisabled]="!isDraggingEnabled()"
     class="taon-draggable-panel"
     [class.taon-window]="effectiveState() === State.WINDOW"
+    [class.taon-window-full]="effectiveState() !== State.WINDOW"
     [class.taon-fullscreen]="
       effectiveState() === State.FULL_SCREEN_DRAGGABLE ||
       effectiveState() === State.FULL_SCREEN_LOCKED

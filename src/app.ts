@@ -68,7 +68,6 @@ import {
 import { TaonAdminService, TaonAdmin } from 'taon/src'; // @browser
 import { TaonStor } from 'taon-storage/src';
 import {
-  TaonAdminModeConfigurationComponent,
   TaonNotFoundComponent,
   TaonSettingsComponent,
   TaonThemeComponent,
@@ -105,7 +104,6 @@ const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP, {
     MatTabsModule,
     RouterModule,
     TranslateDirective,
-    TaonAdminModeConfigurationComponent,
     JsonPipe,
     TaonDraggableButtonPanelComponent,
   ],

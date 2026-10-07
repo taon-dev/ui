@@ -1,9 +1,13 @@
 //#region imports
 import { CommonModule } from '@angular/common';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
+  HostListener,
   Input,
+  OnDestroy,
   OnInit,
   signal,
 } from '@angular/core';
@@ -22,6 +26,7 @@ import { filter } from 'rxjs';
 import { TaonAdminRoute } from './taon-admin-layout.models';
 import { TaonAdminPageTabsComponent } from './taon-admin-page-tabs.component';
 //#endregion
+
 @Component({
   selector: 'taon-admin-layout',
   standalone: true,
@@ -32,14 +37,18 @@ import { TaonAdminPageTabsComponent } from './taon-admin-page-tabs.component';
 
     MatExpansionModule,
     MatIconModule,
+
     TaonAdminPageTabsComponent,
   ],
   templateUrl: './taon-admin-layout.component.html',
   styleUrls: ['./taon-admin-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TaonAdminLayoutComponent implements OnInit {
-  //#region fields and gettrs
+export class TaonAdminLayoutComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
+  //#region fields and getters
+
   @Input({ required: true })
   routes!: Routes;
 
@@ -49,12 +58,10 @@ export class TaonAdminLayoutComponent implements OnInit {
   @Input()
   outlet: string;
 
-  /**
-   * Children discovered for each level-1 route.
-   *
-   * Session -> [Tracking, Providers]
-   * Users   -> [Manager]
-   */
+  protected readonly layoutWidth = signal<number | undefined>(undefined);
+
+  protected readonly layoutHeight = signal<number | undefined>(undefined);
+
   protected readonly level2Routes = signal(new Map<Route, Routes>());
 
   protected readonly currentUrl = signal('');
@@ -63,23 +70,56 @@ export class TaonAdminLayoutComponent implements OnInit {
 
   protected readonly asideOpened = signal(window.innerWidth >= 768);
 
+  private resizeObserver?: ResizeObserver;
+
+  private mutationObserver?: MutationObserver;
+
+  private resizing = false;
+
+  private resizeStartX = 0;
+
+  private resizeStartY = 0;
+
+  private resizeStartWidth = 0;
+
+  private resizeStartHeight = 0;
+
+  private readonly minDialogWidth = 500;
+
+  private readonly minDialogHeight = 350;
+
+  protected get isDialogMode(): boolean {
+    const windowElement = this.getWindowElement();
+
+    if (!windowElement) {
+      return false;
+    }
+
+    return !windowElement.classList.contains('taon-fullscreen');
+  }
+
   private get basePathSegments(): string[] {
     return this.basePath.split('/').filter(Boolean);
   }
+
+  protected get normalizedBasePath(): string {
+    const value = '/' + this.basePath.split('/').filter(Boolean).join('/');
+
+    return value === '/' ? '/' : value;
+  }
+
   //#endregion
 
   //#region constructor
-  constructor(private readonly router: Router) {}
+
+  constructor(
+    private readonly router: Router,
+    private readonly hostElement: ElementRef<HTMLElement>,
+  ) {}
+
   //#endregion
 
-  //#region methods
-  protected toggleAside(): void {
-    this.asideOpened.update(opened => !opened);
-  }
-
-  protected closeAside(): void {
-    this.asideOpened.set(false);
-  }
+  //#region lifecycle
 
   async ngOnInit(): Promise<void> {
     await this.loadCurrentLevel1Route();
@@ -91,9 +131,279 @@ export class TaonAdminLayoutComponent implements OnInit {
       });
   }
 
-  // ---------------------------------------------------------------------------
-  // LEVEL 1
-  // ---------------------------------------------------------------------------
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      const windowElement = this.getWindowElement();
+      // console.log('[windowElement] should not be undefined', windowElement);
+      this.updateLayoutSize();
+      this.startWindowObservers();
+    }, 500); // TODO QUICK_FIX
+  }
+
+  // private waitForWindowElement(
+  //   callback: (windowElement: HTMLElement) => void,
+  // ): void {
+  //   const check = () => {
+  //     console.log('Waiting for window element...');
+  //     const windowElement = this.getWindowElement();
+
+  //     if (windowElement) {
+  //       callback(windowElement);
+  //       return;
+  //     }
+
+  //     requestAnimationFrame(check);
+  //   };
+
+  //   check();
+  // }
+
+  ngOnDestroy(): void {
+    this.resizeObserver?.disconnect();
+    this.mutationObserver?.disconnect();
+
+    window.removeEventListener('pointermove', this.resize);
+
+    window.removeEventListener('pointerup', this.stopResize);
+  }
+
+  //#endregion
+
+  //#region window / layout
+
+  private getWindowElement(): HTMLElement | undefined {
+    return (
+      document.querySelector<HTMLElement>('.taon-window') ??
+      document.querySelector<HTMLElement>('.taon-window-full') ??
+      undefined
+    );
+  }
+
+  private getDraggablePanelElement(): HTMLElement | undefined {
+    return (
+      document.querySelector<HTMLElement>('.taon-draggable-panel') ?? undefined
+    );
+  }
+
+  private startWindowObservers(): void {
+    this.resizeObserver?.disconnect();
+    this.mutationObserver?.disconnect();
+
+    const host = this.hostElement.nativeElement;
+
+    const windowElement = this.getWindowElement();
+
+    // console.log('WINDOW', this.getWindowElement());
+
+    // console.log('PANEL', this.getDraggablePanelElement());
+
+    // ================================================================
+    // SIZE CHANGES
+    // ================================================================
+
+    const observedElement = windowElement ?? host.parentElement;
+
+    if (observedElement) {
+      this.resizeObserver = new ResizeObserver(() => {
+        this.updateLayoutSize();
+      });
+
+      this.resizeObserver.observe(observedElement);
+    }
+
+    // ================================================================
+    // DIALOG <-> FULLSCREEN STATE CHANGES
+    // ================================================================
+
+    if (windowElement) {
+      this.mutationObserver = new MutationObserver(mutations => {
+        const classChanged = mutations.some(
+          mutation =>
+            mutation.type === 'attributes' &&
+            mutation.attributeName === 'class',
+        );
+        // console.log('Class changed:', classChanged);
+
+        if (!classChanged) {
+          return;
+        }
+
+        this.windowModeChanged(windowElement);
+      });
+
+      this.mutationObserver.observe(windowElement, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+    }
+  }
+
+  private windowModeChanged(windowElement: HTMLElement): void {
+    const fullscreen = windowElement.classList.contains('taon-fullscreen');
+
+    if (fullscreen) {
+      this.clearWindowResize(windowElement);
+    }
+
+    requestAnimationFrame(() => {
+      this.updateLayoutSize();
+    });
+  }
+
+  private clearWindowResize(windowElement: HTMLElement): void {
+    windowElement.style.removeProperty('width');
+
+    windowElement.style.removeProperty('height');
+  }
+
+  @HostListener('window:resize')
+  protected windowResized(): void {
+    this.updateLayoutSize();
+  }
+
+  private updateLayoutSize(): void {
+    const host = this.hostElement.nativeElement;
+
+    const hostRect = host.getBoundingClientRect();
+
+    const windowElement = this.getWindowElement();
+
+    const dialogMode =
+      !!windowElement && !windowElement.classList.contains('taon-fullscreen');
+
+    // ================================================================
+    // NORMAL / FULLSCREEN
+    // ================================================================
+
+    if (!dialogMode) {
+      this.layoutWidth.set(Math.floor(hostRect.width));
+
+      this.layoutHeight.set(
+        Math.max(0, Math.floor(window.innerHeight - hostRect.top)),
+      );
+
+      return;
+    }
+
+    // ================================================================
+    // DIALOG
+    // ================================================================
+
+    const windowRect = windowElement.getBoundingClientRect();
+
+    this.layoutWidth.set(
+      Math.max(0, Math.floor(windowRect.right - hostRect.left)),
+    );
+
+    this.layoutHeight.set(
+      Math.max(0, Math.floor(windowRect.bottom - hostRect.top)),
+    );
+  }
+
+  //#endregion
+
+  //#region dialog resizing
+
+  protected startResize(event: PointerEvent): void {
+    if (!this.isDialogMode) {
+      return;
+    }
+
+    const windowElement = this.getWindowElement();
+
+    if (!windowElement) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const windowRect = windowElement.getBoundingClientRect();
+
+    this.resizing = true;
+
+    this.resizeStartX = event.clientX;
+
+    this.resizeStartY = event.clientY;
+
+    this.resizeStartWidth = windowRect.width;
+
+    this.resizeStartHeight = windowRect.height;
+
+    window.addEventListener('pointermove', this.resize);
+
+    window.addEventListener('pointerup', this.stopResize);
+  }
+
+  private readonly resize = (event: PointerEvent): void => {
+    if (!this.resizing) {
+      return;
+    }
+
+    const windowElement = this.getWindowElement();
+
+    if (!windowElement) {
+      return;
+    }
+
+    const windowRect = windowElement.getBoundingClientRect();
+
+    const deltaX = event.clientX - this.resizeStartX;
+
+    const deltaY = event.clientY - this.resizeStartY;
+
+    const maxWidth = window.innerWidth - windowRect.left;
+
+    const maxHeight = window.innerHeight - windowRect.top;
+
+    const width = Math.min(
+      maxWidth,
+      Math.max(this.minDialogWidth, this.resizeStartWidth + deltaX),
+    );
+
+    const height = Math.min(
+      maxHeight,
+      Math.max(this.minDialogHeight, this.resizeStartHeight + deltaY),
+    );
+
+    windowElement.style.width = `${width}px`;
+
+    windowElement.style.height = `${height}px`;
+  };
+
+  private readonly stopResize = (): void => {
+    if (!this.resizing) {
+      return;
+    }
+
+    this.resizing = false;
+
+    window.removeEventListener('pointermove', this.resize);
+
+    window.removeEventListener('pointerup', this.stopResize);
+  };
+
+  //#endregion
+
+  //#region aside
+
+  protected toggleAside(): void {
+    this.asideOpened.update(opened => !opened);
+  }
+
+  protected closeAside(): void {
+    this.asideOpened.set(false);
+  }
+
+  private closeAsideOnMobile(): void {
+    if (window.innerWidth < 768) {
+      this.closeAside();
+    }
+  }
+
+  //#endregion
+
+  //#region level 1
 
   protected async level1Clicked(route: Route): Promise<void> {
     if (!route.path) {
@@ -106,81 +416,6 @@ export class TaonAdminLayoutComponent implements OnInit {
 
     if (!this.isExpandable(route)) {
       this.closeAsideOnMobile();
-    }
-  }
-
-  protected async level2Clicked(level1: Route, level2: Route): Promise<void> {
-    if (!level1.path || !level2.path) {
-      return;
-    }
-
-    await this.navigateTo([level1.path, level2.path]);
-
-    this.closeAsideOnMobile();
-  }
-
-  private outletBaseMatrixParams(): Record<string, string> {
-    if (!this.outlet) {
-      return {};
-    }
-
-    const tree = this.router.parseUrl(this.router.url);
-
-    const outletGroup = tree.root.children[this.outlet];
-
-    return {
-      ...outletGroup?.segments[0]?.parameters,
-    };
-  }
-
-  private async navigateTo(routeSegments: string[]): Promise<boolean> {
-    const segments = [...this.basePathSegments, ...routeSegments];
-
-    /**
-     * Named / auxiliary outlet:
-     *
-     * /products/123(admin:main/session/providers)
-     */
-
-    if (this.outlet) {
-      const [firstSegment, ...remainingSegments] = segments;
-
-      if (!firstSegment) {
-        return false;
-      }
-
-      const matrixParams = this.outletBaseMatrixParams();
-
-      return this.router.navigate([
-        {
-          outlets: {
-            [this.outlet]: [
-              firstSegment,
-
-              /**
-               * Angular interprets an object following
-               * a segment as matrix parameters.
-               */
-              matrixParams,
-
-              ...remainingSegments,
-            ],
-          },
-        },
-      ]);
-    }
-
-    /**
-     * Normal primary outlet:
-     *
-     * /main/session/providers
-     */
-    return this.router.navigate(['/', ...segments]);
-  }
-
-  private closeAsideOnMobile(): void {
-    if (window.innerWidth < 768) {
-      this.closeAside();
     }
   }
 
@@ -203,9 +438,19 @@ export class TaonAdminLayoutComponent implements OnInit {
     return this.isPathActive([route.path]);
   }
 
-  // ---------------------------------------------------------------------------
-  // LEVEL 2
-  // ---------------------------------------------------------------------------
+  //#endregion
+
+  //#region level 2
+
+  protected async level2Clicked(level1: Route, level2: Route): Promise<void> {
+    if (!level1.path || !level2.path) {
+      return;
+    }
+
+    await this.navigateTo([level1.path, level2.path]);
+
+    this.closeAsideOnMobile();
+  }
 
   protected getLevel2Routes(route: Route): Routes {
     return this.level2Routes().get(route) ?? [];
@@ -223,9 +468,51 @@ export class TaonAdminLayoutComponent implements OnInit {
     return [this.normalizedBasePath, level1.path!, level2.path!];
   }
 
-  // ---------------------------------------------------------------------------
-  // ROUTE LOADING
-  // ---------------------------------------------------------------------------
+  //#endregion
+
+  //#region navigation
+
+  private outletBaseMatrixParams(): Record<string, string> {
+    if (!this.outlet) {
+      return {};
+    }
+
+    const tree = this.router.parseUrl(this.router.url);
+
+    const outletGroup = tree.root.children[this.outlet];
+
+    return {
+      ...outletGroup?.segments[0]?.parameters,
+    };
+  }
+
+  private async navigateTo(routeSegments: string[]): Promise<boolean> {
+    const segments = [...this.basePathSegments, ...routeSegments];
+
+    if (this.outlet) {
+      const [firstSegment, ...remainingSegments] = segments;
+
+      if (!firstSegment) {
+        return false;
+      }
+
+      const matrixParams = this.outletBaseMatrixParams();
+
+      return this.router.navigate([
+        {
+          outlets: {
+            [this.outlet]: [firstSegment, matrixParams, ...remainingSegments],
+          },
+        },
+      ]);
+    }
+
+    return this.router.navigate(['/', ...segments]);
+  }
+
+  //#endregion
+
+  //#region route loading
 
   private async ensureLevel2Loaded(level1: Route): Promise<void> {
     if (this.level2Routes().has(level1)) {
@@ -241,23 +528,6 @@ export class TaonAdminLayoutComponent implements OnInit {
     try {
       const lazyRoutes = await this.loadRouteChildren(level1);
 
-      /**
-       * Your lazy modules have this shape:
-       *
-       * [
-       *   {
-       *     path: '',
-       *     component: SessionComponent,
-       *     children: [
-       *       { path: 'tracking' },
-       *       { path: 'providers' }
-       *     ]
-       *   }
-       * ]
-       *
-       * The path:'' wrapper DOES NOT represent a navigation
-       * level, so unwrap it.
-       */
       const level2 = this.unwrapEmptyPathRoutes(lazyRoutes);
 
       const map = new Map(this.level2Routes());
@@ -284,21 +554,6 @@ export class TaonAdminLayoutComponent implements OnInit {
     return [];
   }
 
-  /**
-   * Removes structural path:'' wrappers.
-   *
-   * [
-   *   {
-   *     path: '',
-   *     component: SessionComponent,
-   *     children: [...]
-   *   }
-   * ]
-   *
-   * becomes:
-   *
-   * [...]
-   */
   private unwrapEmptyPathRoutes(routes: Routes): Routes {
     const result: Routes = [];
 
@@ -309,9 +564,6 @@ export class TaonAdminLayoutComponent implements OnInit {
         continue;
       }
 
-      /**
-       * redirects etc. shouldn't become menu entries.
-       */
       if (route.redirectTo !== undefined || route.data?.['hideInNavigation']) {
         continue;
       }
@@ -322,9 +574,9 @@ export class TaonAdminLayoutComponent implements OnInit {
     return result;
   }
 
-  // ---------------------------------------------------------------------------
-  // DIRECT URL SUPPORT
-  // ---------------------------------------------------------------------------
+  //#endregion
+
+  //#region direct url support
 
   private async loadCurrentLevel1Route(): Promise<void> {
     const relativeSegments = this.currentRelativeSegments();
@@ -342,9 +594,9 @@ export class TaonAdminLayoutComponent implements OnInit {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // HELPERS
-  // ---------------------------------------------------------------------------
+  //#endregion
+
+  //#region helpers
 
   protected label(route: Route): string {
     return route.data?.['menuItem'] ?? this.startCase(route.path ?? '');
@@ -360,6 +612,10 @@ export class TaonAdminLayoutComponent implements OnInit {
 
   protected isLoading(route: Route): boolean {
     return this.loadingRoutes().has(route);
+  }
+
+  protected isExpandable(route: Route): boolean {
+    return route.data?.['expandable'] !== false;
   }
 
   private isPathActive(routeSegments: string[]): boolean {
@@ -392,20 +648,6 @@ export class TaonAdminLayoutComponent implements OnInit {
     return group.segments.map(segment => segment.path);
   }
 
-  protected isExpandable(route: Route): boolean {
-    return route.data?.['expandable'] !== false;
-  }
-
-  protected get normalizedBasePath(): string {
-    const value = '/' + this.basePath.split('/').filter(Boolean).join('/');
-
-    return value === '/' ? '/' : value;
-  }
-
-  private cleanUrl(url: string): string {
-    return url.split('?')[0].split('#')[0];
-  }
-
   private setLoading(route: Route, loading: boolean): void {
     const set = new Set(this.loadingRoutes());
 
@@ -423,5 +665,6 @@ export class TaonAdminLayoutComponent implements OnInit {
       .replace(/[-_]+/g, ' ')
       .replace(/\b\w/g, char => char.toUpperCase());
   }
+
   //#endregion
 }
