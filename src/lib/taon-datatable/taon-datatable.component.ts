@@ -192,6 +192,8 @@ export class TaonDatatableComponent implements OnInit {
     switchMap(() => this.loadData()),
   );
 
+  expandedRows = new Set<any>();
+
   //#endregion
 
   //#region getters
@@ -205,6 +207,22 @@ export class TaonDatatableComponent implements OnInit {
   }
 
   //#endregion
+
+  onExpansionChange(event: any) {
+    // console.log(event);
+    // adapt this depending on exact MtxGrid event shape
+    if (event.expanded) {
+      this.expandedRows.add(event.data);
+    } else {
+      this.expandedRows.delete(event.data);
+    }
+
+    this.expansionChange.emit(event);
+  }
+
+  isExpanded(row: any): boolean {
+    return this.expandedRows.has(row);
+  }
 
   //#region init
 

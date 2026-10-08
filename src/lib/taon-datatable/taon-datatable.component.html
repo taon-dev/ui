@@ -1,5 +1,5 @@
 <div class="flex w-full flex-col gap-3">
-  <!-- toolbar -->
+  <!-- #region toolbar -->
   @if (!hideSearch) {
     <div
       class="flex w-full flex-col gap-2 rounded-lg border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-700 dark:bg-gray-900 md:flex-row md:items-center">
@@ -68,8 +68,9 @@
       }
     </div>
   }
+  <!-- #endregion -->
 
-  <!-- advanced filters -->
+  <!-- #region advanced filters -->
   @if (!hideSearch && searchMode === 'advanced' && advancedSearchOpened) {
     <div
       class="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -112,8 +113,9 @@
       </div>
     </div>
   }
+  <!-- #endregion -->
 
-  <!-- grid -->
+  <!-- #region grid -->
   <div
     class="relative min-h-[250px] overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
     @if (isLoading) {
@@ -132,16 +134,28 @@
       [data]="rows"
       [columns]="columns"
       [expandable]="expandable"
-      [expansionTemplate]="expansionTemplate"
+      [expansionTemplate]="lazyExpansionTemplate"
       [length]="totalElements"
       [pageOnFront]="false"
       [pageIndex]="pageNumber - 1"
       [pageSize]="pageSize"
       [pageSizeOptions]="pageSizeOptions"
       [showPaginator]="showPaginator"
-      (expansionChange)="expansionChange.emit($event)"
+      (expansionChange)="onExpansionChange($event)"
       (page)="getNextPage($event)"
       (sortChange)="sortChanged($event)">
     </mtx-grid>
+
+    <ng-template
+      #lazyExpansionTemplate
+      let-row>
+      @if (isExpanded(row)) {
+        <ng-container
+          [ngTemplateOutlet]="expansionTemplate"
+          [ngTemplateOutletContext]="{ $implicit: row }">
+        </ng-container>
+      }
+    </ng-template>
   </div>
+  <!-- #endregion -->
 </div>
