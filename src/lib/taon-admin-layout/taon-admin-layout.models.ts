@@ -107,7 +107,8 @@ type MaterialIcon =
   | 'supervisor_account'
   | 'approval'
   | 'family_group'
-  | 'recent_actors';
+  | 'recent_actors'
+  | 'perm_media'
 
 export interface TaonAdminRouteOptions {
   path: string;

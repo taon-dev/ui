@@ -14,6 +14,7 @@ import {
   ViewChild,
   inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,6 +23,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MtxGridColumn, MtxGridModule } from '@ng-matero/extensions/grid';
+import { getDefaultModel } from 'ng2-rest/src';
 import {
   BehaviorSubject,
   Observable,
@@ -37,10 +39,6 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-import { getDefaultModel } from 'ng2-rest/src';
-
 import {
   Symbols as TaonSymbols,
   TaonBaseCrudController,
@@ -49,7 +47,6 @@ import {
   TaonPaginationQuery,
   ClassHelpers,
 } from 'taon/src';
-
 import { _, json5 } from 'tnp-core/src';
 //#endregion
 
@@ -88,7 +85,9 @@ type SearchMode = 'simple' | 'advanced';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaonDatatableComponent implements OnInit {
+  //#region fields & getters
   private readonly cdr = inject(ChangeDetectorRef);
+
   private readonly destroyRef = inject(DestroyRef);
 
   //#region inputs
@@ -208,6 +207,9 @@ export class TaonDatatableComponent implements OnInit {
 
   //#endregion
 
+  //#endregion
+
+  //#region expansion
   onExpansionChange(event: any) {
     // console.log(event);
     // adapt this depending on exact MtxGrid event shape
@@ -224,7 +226,9 @@ export class TaonDatatableComponent implements OnInit {
     return this.expandedRows.has(row);
   }
 
-  //#region init
+  //#endregion
+
+  //#region hooks
 
   ngOnInit(): void {
     this.prepareColumns();
