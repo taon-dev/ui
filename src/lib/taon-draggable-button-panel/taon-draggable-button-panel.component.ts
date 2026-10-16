@@ -1,15 +1,17 @@
 //#region imports
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { NgIf } from '@angular/common';
+import { NgIf, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnDestroy,
   OnInit,
   Output,
   signal,
+  TemplateRef,
   ViewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,6 +19,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, firstValueFrom, Subscription, take } from 'rxjs';
+
+import { TaonAdminMenuContext } from '../taon-admin-layout/taon-admin-menu-context';
 
 import { TaonDraggableButtonPanelState } from './taon-draggable-button-panel.models';
 //#endregion
@@ -28,6 +32,7 @@ import { TaonDraggableButtonPanelState } from './taon-draggable-button-panel.mod
     CdkDrag,
     CdkDragHandle,
     NgIf,
+    NgTemplateOutlet,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
@@ -35,9 +40,20 @@ import { TaonDraggableButtonPanelState } from './taon-draggable-button-panel.mod
   templateUrl: './taon-draggable-button-panel.component.html',
   styleUrls: ['./taon-draggable-button-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [TaonAdminMenuContext],
 })
-export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
+export class TaonDraggableButtonPanelComponent<TContext = unknown>
+  implements OnInit, OnDestroy
+{
+  //#region fields and getters
   readonly State = TaonDraggableButtonPanelState;
+
+  private readonly menuContext = inject(TaonAdminMenuContext);
+
+  @Input()
+  set context(context: TContext) {
+    this.menuContext.context.set(context);
+  }
 
   @ViewChild(CdkDrag)
   private drag?: CdkDrag;
@@ -97,8 +113,22 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
 
   private routerSubscription?: Subscription;
 
-  constructor(private readonly router: Router) {}
+  @Input()
+  autoHideIcon = true;
 
+  @Input()
+  iconTemplate?: TemplateRef<unknown>;
+
+  @Input()
+  headerCenterTemplate?: TemplateRef<unknown>;
+
+  //#endregion
+
+  //#region constructor
+  constructor(private readonly router: Router) {}
+  //#endregion
+
+  //#region methods / ng on init
   async ngOnInit(): Promise<void> {
     window.addEventListener('resize', this.resizeListener);
     /**
@@ -150,12 +180,16 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
         this.restoreStateFromUrl();
       });
   }
+  //#endregion
 
+  //#region methods / ng on destroy
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.resizeListener);
     this.routerSubscription?.unsubscribe();
   }
+  //#endregion
 
+  //#region methods / toogle fullscreen
   protected toogleFullscreen(event: Event) {
     event.stopImmediatePropagation();
     event.stopPropagation();
@@ -176,7 +210,9 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
       void this.setState(TaonDraggableButtonPanelState.WINDOW);
     }
   }
+  //#endregion
 
+  //#region methods / effective state
   protected effectiveState(): TaonDraggableButtonPanelState {
     if (
       this.forceFullScreen() &&
@@ -187,11 +223,13 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
 
     return this.currentState();
   }
+  //#endregion
 
   // ===========================================================================
   // INITIAL ROUTING
   // ===========================================================================
 
+  //#region methods / wait for initial navigation
   private async waitForInitialNavigation(): Promise<void> {
     /**
      * Router already completed at least one navigation.
@@ -211,7 +249,9 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
       ),
     );
   }
+  //#endregion
 
+  //#region methods / ensure outlet base path
   private async ensureOutletBasePath(): Promise<void> {
     if (!this.outlet || !this.basePath) {
       return;
@@ -276,11 +316,13 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
       },
     );
   }
+  //#endregion
 
   // ===========================================================================
   // STATE
   // ===========================================================================
 
+  //#region methods / set state
   protected async setState(next: TaonDraggableButtonPanelState): Promise<void> {
     if (!this.isTransitionAllowed(next)) {
       return;
@@ -292,31 +334,52 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
 
     await this.saveStateToUrl(next);
   }
+  //#endregion
 
+  //#region methods / open
   protected open(): void {
     void this.setState(TaonDraggableButtonPanelState.WINDOW);
   }
 
+  protected toggle(): void {
+    if (this.currentState() === this.State.CLICKABLE_BUTTON) {
+      this.open();
+    } else {
+      this.returnToButton();
+    }
+  }
+  //#endregion
+
+  //#region methods / return to button
   protected returnToButton(): void {
+    this.resetDragPosition();
     void this.setState(TaonDraggableButtonPanelState.CLICKABLE_BUTTON);
   }
+  //#endregion
 
+  //#region methods / window mode
   protected windowMode(): void {
     void this.setState(TaonDraggableButtonPanelState.WINDOW);
   }
+  //#endregion
 
+  //#region methods / full screen draggable
   protected fullScreenDraggable(): void {
     this.resetDragPosition();
 
     void this.setState(TaonDraggableButtonPanelState.FULL_SCREEN_DRAGGABLE);
   }
+  //#endregion
 
+  //#region methods / lock full screen
   protected lockFullScreen(): void {
     this.resetDragPosition();
 
     void this.setState(TaonDraggableButtonPanelState.FULL_SCREEN_LOCKED);
   }
+  //#endregion
 
+  //#region methods / is dragging enabled
   protected isDraggingEnabled(): boolean {
     if (this.forceFullScreen()) {
       return false;
@@ -328,11 +391,13 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
         TaonDraggableButtonPanelState.FULL_SCREEN_DRAGGABLE
     );
   }
+  //#endregion
 
   // ===========================================================================
   // URL STATE
   // ===========================================================================
 
+  //#region methods / restore state from url
   private restoreStateFromUrl(): void {
     if (!this.outlet) {
       return;
@@ -386,7 +451,9 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
       });
     }
   }
+  //#endregion
 
+  //#region methods / save state to url
   private async saveStateToUrl(
     state: TaonDraggableButtonPanelState,
   ): Promise<void> {
@@ -423,7 +490,9 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
       replaceUrl: true,
     });
   }
+  //#endregion
 
+  //#region methods / is valid state
   private isValidState(
     value: string | undefined,
   ): value is TaonDraggableButtonPanelState {
@@ -431,19 +500,23 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
       value as TaonDraggableButtonPanelState,
     );
   }
+  //#endregion
 
   // ===========================================================================
   // DRAG
   // ===========================================================================
 
+  //#region methods / reset drag position
   private resetDragPosition(): void {
     this.drag?.reset();
   }
+  //#endregion
 
   // ===========================================================================
   // TRANSITIONS
   // ===========================================================================
 
+  //#region methods / is transition allowed
   private isTransitionAllowed(next: TaonDraggableButtonPanelState): boolean {
     const current = this.currentState();
 
@@ -476,4 +549,5 @@ export class TaonDraggableButtonPanelComponent implements OnInit, OnDestroy {
 
     return transitions[current].includes(next);
   }
+  //#endregion
 }

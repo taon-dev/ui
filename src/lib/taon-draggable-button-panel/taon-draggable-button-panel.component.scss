@@ -2,6 +2,10 @@
   display: contents;
 }
 
+.taon-admin-panel-toogle-button-dimmer-opacity {
+  opacity: 0.6;
+}
+
 .taon-draggable-panel {
   position: fixed;
 
@@ -45,15 +49,14 @@
 .taon-window-bar {
   height: 48px;
 
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
 
   flex-shrink: 0;
-
   padding-left: 12px;
 
   border-bottom: 1px solid #e5e7eb;
-
   background: #fafafa;
 
   user-select: none;

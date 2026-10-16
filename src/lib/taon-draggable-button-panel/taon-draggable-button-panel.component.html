@@ -1,96 +1,108 @@
-@if (currentState() === State.CLICKABLE_BUTTON) {
-  <!-- #region BUTTON - works on desktop AND mobile -->
-  <button
-    class="taon-admin-panel-toogle-open-button"
-    mat-icon-button
-    type="button"
-    [matTooltip]="title"
-    (click)="open()">
-    <mat-icon>
-      {{ buttonIcon }}
-    </mat-icon>
-  </button>
-  <!-- #endregion -->
-} @else {
-  <section
-    cdkDrag
-    [cdkDragDisabled]="!isDraggingEnabled()"
-    class="taon-draggable-panel"
-    [class.taon-window]="effectiveState() === State.WINDOW"
-    [class.taon-window-full]="effectiveState() !== State.WINDOW"
-    [class.taon-fullscreen]="
-      effectiveState() === State.FULL_SCREEN_DRAGGABLE ||
-      effectiveState() === State.FULL_SCREEN_LOCKED
-    ">
-    <header
-      cdkDragHandle
-      (dblclick)="toogleFullscreen($event)"
-      class="taon-window-bar">
-      <div class="flex min-w-0 flex-1 items-center gap-2">
-        <mat-icon class="text-gray-500"> admin_panel_settings </mat-icon>
+@if (currentState() === State.CLICKABLE_BUTTON || !autoHideIcon) {
+  @if (iconTemplate) {
+    <ng-container [ngTemplateOutlet]="iconTemplate" />
+  } @else {
+    <button
+      class="taon-admin-panel-toogle-open-button"
+      [class.taon-admin-panel-toogle-button-dimmer-opacity]="
+        effectiveState() !== State.CLICKABLE_BUTTON
+      "
+      mat-icon-button
+      type="button"
+      [matTooltip]="title"
+      (click)="toggle()">
+      <mat-icon>{{ buttonIcon }}</mat-icon>
+    </button>
+  }
+}
 
-        <span class="truncate font-medium">
-          {{ title }}
-        </span>
-      </div>
+<section
+  cdkDrag
+  [hidden]="currentState() === State.CLICKABLE_BUTTON"
+  [cdkDragDisabled]="!isDraggingEnabled()"
+  class="taon-draggable-panel"
+  [class.taon-window]="effectiveState() === State.WINDOW"
+  [class.taon-window-full]="effectiveState() !== State.WINDOW"
+  [class.taon-fullscreen]="
+    effectiveState() === State.FULL_SCREEN_DRAGGABLE ||
+    effectiveState() === State.FULL_SCREEN_LOCKED
+  ">
+  <header
+    cdkDragHandle
+    (dblclick)="toogleFullscreen($event)"
+    class="taon-window-bar">
+    <!-- LEFT -->
+    <div class="flex min-w-0 flex-1 items-center gap-2">
+      <mat-icon class="text-gray-500"> admin_panel_settings </mat-icon>
 
-      <!-- #region window buttons -->
-      <div class="flex shrink-0 items-center">
-        <!-- Desktop-only window/fullscreen controls -->
-        @if (!forceFullScreen()) {
-          @if (currentState() !== State.WINDOW) {
-            <button
-              mat-icon-button
-              type="button"
-              matTooltip="Window mode"
-              (click)="windowMode()">
-              <mat-icon>filter_none</mat-icon>
-            </button>
-          }
+      <span class="truncate font-medium">
+        {{ title }}
+      </span>
+    </div>
 
-          @if (currentState() === State.WINDOW) {
-            <button
-              mat-icon-button
-              type="button"
-              matTooltip="Full screen"
-              (click)="fullScreenDraggable()">
-              <mat-icon>fullscreen</mat-icon>
-            </button>
-          }
+    <!-- EXACT CENTER -->
+    <div class="flex min-w-0 items-center justify-center">
+      @if (headerCenterTemplate) {
+        <ng-container [ngTemplateOutlet]="headerCenterTemplate" />
+      }
+    </div>
 
-          @if (currentState() !== State.FULL_SCREEN_LOCKED) {
-            <button
-              mat-icon-button
-              type="button"
-              matTooltip="Lock full screen"
-              (click)="lockFullScreen()">
-              <mat-icon>lock_open</mat-icon>
-            </button>
-          } @else {
-            <button
-              mat-icon-button
-              type="button"
-              matTooltip="Unlock"
-              (click)="fullScreenDraggable()">
-              <mat-icon>lock</mat-icon>
-            </button>
-          }
+    <!-- #region window buttons -->
+    <div class="flex shrink-0 items-center">
+      <!-- Desktop-only window/fullscreen controls -->
+      @if (!forceFullScreen()) {
+        @if (currentState() !== State.WINDOW) {
+          <button
+            mat-icon-button
+            type="button"
+            matTooltip="Window mode"
+            (click)="windowMode()">
+            <mat-icon>filter_none</mat-icon>
+          </button>
         }
 
-        <!-- ALWAYS available -->
-        <button
-          mat-icon-button
-          type="button"
-          matTooltip="Close admin panel"
-          (click)="returnToButton()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-      <!-- #endregion -->
-    </header>
+        @if (currentState() === State.WINDOW) {
+          <button
+            mat-icon-button
+            type="button"
+            matTooltip="Full screen"
+            (click)="fullScreenDraggable()">
+            <mat-icon>fullscreen</mat-icon>
+          </button>
+        }
 
-    <div class="min-h-0 flex-1 overflow-hidden">
-      <ng-content />
+        @if (currentState() !== State.FULL_SCREEN_LOCKED) {
+          <button
+            mat-icon-button
+            type="button"
+            matTooltip="Lock full screen"
+            (click)="lockFullScreen()">
+            <mat-icon>lock_open</mat-icon>
+          </button>
+        } @else {
+          <button
+            mat-icon-button
+            type="button"
+            matTooltip="Unlock"
+            (click)="fullScreenDraggable()">
+            <mat-icon>lock</mat-icon>
+          </button>
+        }
+      }
+
+      <!-- ALWAYS available -->
+      <button
+        mat-icon-button
+        type="button"
+        matTooltip="Close admin panel"
+        (click)="returnToButton()">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
-  </section>
-}
+    <!-- #endregion -->
+  </header>
+
+  <div class="min-h-0 flex-1 overflow-hidden">
+    <ng-content />
+  </div>
+</section>

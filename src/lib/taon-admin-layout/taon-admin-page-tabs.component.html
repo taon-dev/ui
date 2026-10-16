@@ -5,13 +5,18 @@
         mat-tab-nav-bar
         [tabPanel]="tabPanel">
         @for (route of level.routes; track route.path) {
-          <a
-            mat-tab-link
-            class="cursor-pointer"
-            [active]="isActive(level, route)"
-            (click)="tabClicked(level, route)">
-            {{ label(route) }}
-          </a>
+          @if (menuContext.isVisible(route)) {
+            <a
+              mat-tab-link
+              class="cursor-pointer"
+              [disabled]="menuContext.isDisabled(route)"
+              [class.admin-tab-disabled]="menuContext.isDisabled(route)"
+              [matTooltip]="menuContext.disabledTooltip(route)"
+              [active]="isActive(level, route)"
+              (click)="tabClicked(level, route)">
+              {{ label(route) }}
+            </a>
+          }
         }
       </nav>
     }

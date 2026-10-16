@@ -1,15 +1,18 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   Input,
   OnInit,
   signal,
 } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NavigationEnd, Route, Router, Routes } from '@angular/router';
 import { filter } from 'rxjs';
 
 import { TaonAdminRoute } from './taon-admin-layout.models';
+import { TaonAdminMenuContext } from './taon-admin-menu-context';
 
 export interface TaonAdminTabLevel {
   level: number;
@@ -28,12 +31,16 @@ export interface TaonAdminTabLevel {
 @Component({
   selector: 'taon-admin-page-tabs',
   standalone: true,
-  imports: [MatTabsModule],
+  imports: [MatTabsModule, MatTooltipModule],
   templateUrl: './taon-admin-page-tabs.component.html',
   styleUrl: './taon-admin-page-tabs.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaonAdminPageTabsComponent implements OnInit {
+  protected readonly menuContext =
+    inject(TaonAdminMenuContext, { optional: true }) ??
+    new TaonAdminMenuContext();
+
   @Input({ required: true })
   routes!: Routes;
 
@@ -92,7 +99,11 @@ export class TaonAdminPageTabsComponent implements OnInit {
     level: TaonAdminTabLevel,
     route: Route,
   ): Promise<void> {
-    if (!route.path) {
+    if (
+      !route.path ||
+      !this.menuContext.isVisible(route) ||
+      this.menuContext.isDisabled(route)
+    ) {
       return;
     }
 

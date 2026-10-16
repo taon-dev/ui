@@ -10,6 +10,7 @@ export * from './directives/taon-horizontal-wheel-scrolling.directive'; // @brow
 export * from './i18n/lib.translation'; 
 export * from './taon-admin-layout/taon-admin-layout.component'; // @browser
 export * from './taon-admin-layout/taon-admin-layout.models'; 
+export * from './taon-admin-layout/taon-admin-menu-context'; 
 export * from './taon-admin-layout/taon-admin-page-tabs.component'; // @browser
 export * from './taon-admin-layout/taon-base-admin-page.component'; // @browser
 export * from './taon-backoffice-notifications/taon-backoffice-notifications.component'; // @browser

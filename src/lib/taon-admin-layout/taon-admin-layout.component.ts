@@ -6,6 +6,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnDestroy,
   OnInit,
@@ -13,6 +14,7 @@ import {
 } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   NavigationEnd,
   Route,
@@ -24,6 +26,7 @@ import {
 import { filter } from 'rxjs';
 
 import { TaonAdminRoute } from './taon-admin-layout.models';
+import { TaonAdminMenuContext } from './taon-admin-menu-context';
 import { TaonAdminPageTabsComponent } from './taon-admin-page-tabs.component';
 //#endregion
 
@@ -37,6 +40,7 @@ import { TaonAdminPageTabsComponent } from './taon-admin-page-tabs.component';
 
     MatExpansionModule,
     MatIconModule,
+    MatTooltipModule,
 
     TaonAdminPageTabsComponent,
   ],
@@ -48,6 +52,10 @@ export class TaonAdminLayoutComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
   //#region fields and getters
+
+  protected readonly menuContext =
+    inject(TaonAdminMenuContext, { optional: true }) ??
+    new TaonAdminMenuContext();
 
   @Input({ required: true })
   routes!: Routes;
@@ -406,7 +414,11 @@ export class TaonAdminLayoutComponent
   //#region level 1
 
   protected async level1Clicked(route: Route): Promise<void> {
-    if (!route.path) {
+    if (
+      !route.path ||
+      !this.menuContext.isVisible(route) ||
+      this.menuContext.isDisabled(route)
+    ) {
       return;
     }
 
@@ -423,7 +435,11 @@ export class TaonAdminLayoutComponent
     route: Route,
     expanded: boolean,
   ): Promise<void> {
-    if (!expanded) {
+    if (
+      !expanded ||
+      !this.menuContext.isVisible(route) ||
+      this.menuContext.isDisabled(route)
+    ) {
       return;
     }
 
@@ -443,7 +459,14 @@ export class TaonAdminLayoutComponent
   //#region level 2
 
   protected async level2Clicked(level1: Route, level2: Route): Promise<void> {
-    if (!level1.path || !level2.path) {
+    if (
+      !level1.path ||
+      !level2.path ||
+      !this.menuContext.isVisible(level1) ||
+      this.menuContext.isDisabled(level1) ||
+      !this.menuContext.isVisible(level2) ||
+      this.menuContext.isDisabled(level2)
+    ) {
       return;
     }
 

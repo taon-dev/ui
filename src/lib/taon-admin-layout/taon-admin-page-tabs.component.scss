@@ -3,3 +3,10 @@
 //   --mat-tab-header-active-hover-indicator-color: #ff8585 !important;
 //   --mat-tab-header-active-label-text-color: #303030 !important;
 // }
+
+.mat-mdc-tab-link.admin-tab-disabled {
+  // Keep disabled tabs hoverable for their explanatory tooltip.
+  pointer-events: auto;
+  cursor: not-allowed;
+  opacity: 0.5;
+}

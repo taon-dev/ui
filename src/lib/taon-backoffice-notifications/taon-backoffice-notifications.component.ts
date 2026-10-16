@@ -54,14 +54,14 @@ export class TaonBackofficeNotificationsComponent {
 
         const statusCode = jsonMsg.status ?? error.statusCode;
 
-        const httpStatus = getHttpStatus(statusCode, jsonMsg.message);
-        if (this.taonAdminService.shouldSkipShowingError(httpStatus)) {
+        const code = jsonMsg?.code || getHttpStatus(statusCode);
+        if (this.taonAdminService.shouldSkipShowingError(code as any)) {
           console.log(
             `[@taon-dev/sudo] Skipping notificaiton for message "${jsonMsg.message}" (code=${statusCode})`,
           );
         } else {
           this.notification.error({
-            title: jsonMsg?.message || t.gettext('Unknown error'),
+            title: t.translate(jsonMsg.message) || t.gettext('Unknown error'),
 
             details: jsonMsg?.details,
           });

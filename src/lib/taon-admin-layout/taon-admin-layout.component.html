@@ -52,88 +52,127 @@
       <div class="admin-aside-content">
         <mat-accordion class="admin-menu">
           @for (level1 of routes; track level1.path) {
-            @if (isExpandable(level1)) {
-              <mat-expansion-panel
-                [expanded]="isLevel1Active(level1)"
-                (expandedChange)="panelExpanded(level1, $event)">
-                <mat-expansion-panel-header (click)="level1Clicked(level1)">
-                  <mat-panel-title>
-                    <div class="admin-menu-item">
-                      @if (icon(level1)) {
-                        <mat-icon
-                          [ngStyle]="{
-                            color: color(level1),
-                          }">
-                          {{ icon(level1) }}
-                        </mat-icon>
-                      }
-
-                      <span
-                        [class.font-semibold]="isLevel1Active(level1)"
-                        [ngStyle]="{
-                          color: color(level1),
-                        }">
-                        {{ label(level1) }}
-                      </span>
-                    </div>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-
-                <div class="admin-level2">
-                  @if (isLoading(level1)) {
-                    <div class="admin-loading">Loading...</div>
-                  } @else {
-                    @for (
-                      level2 of getLevel2Routes(level1);
-                      track level2.path
-                    ) {
-                      <a
-                        class="admin-level2-item"
-                        [class.admin-level2-item-active]="
-                          isLevel2Active(level1, level2)
-                        "
-                        (click)="level2Clicked(level1, level2)">
-                        @if (icon(level2)) {
+            @if (menuContext.isVisible(level1)) {
+              @if (isExpandable(level1)) {
+                <mat-expansion-panel
+                  [disabled]="menuContext.isDisabled(level1)"
+                  [expanded]="
+                    isLevel1Active(level1) && !menuContext.isDisabled(level1)
+                  "
+                  (expandedChange)="panelExpanded(level1, $event)">
+                  <mat-expansion-panel-header
+                    [class.admin-menu-item-disabled]="
+                      menuContext.isDisabled(level1)
+                    "
+                    [matTooltip]="menuContext.disabledTooltip(level1)"
+                    (click)="level1Clicked(level1)">
+                    <mat-panel-title>
+                      <div class="admin-menu-item">
+                        @if (icon(level1)) {
                           <mat-icon
                             [ngStyle]="{
-                              color: color(level2),
+                              color: color(level1),
                             }">
-                            {{ icon(level2) }}
+                            {{ icon(level1) }}
                           </mat-icon>
                         }
 
                         <span
+                          [class.font-semibold]="isLevel1Active(level1)"
                           [ngStyle]="{
-                            color: color(level2),
+                            color: color(level1),
                           }">
-                          {{ label(level2) }}
+                          {{ label(level1) }}
                         </span>
-                      </a>
+                      </div>
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+
+                  <div class="admin-level2">
+                    @if (isLoading(level1)) {
+                      <div class="admin-loading">Loading...</div>
+                    } @else {
+                      @for (
+                        level2 of getLevel2Routes(level1);
+                        track level2.path
+                      ) {
+                        @if (menuContext.isVisible(level2)) {
+                          <a
+                            class="admin-level2-item"
+                            role="button"
+                            [attr.tabindex]="
+                              menuContext.isDisabled(level2) ? -1 : 0
+                            "
+                            [attr.aria-disabled]="
+                              menuContext.isDisabled(level2)
+                            "
+                            [class.admin-menu-item-disabled]="
+                              menuContext.isDisabled(level2)
+                            "
+                            [matTooltip]="menuContext.disabledTooltip(level2)"
+                            [class.admin-level2-item-active]="
+                              isLevel2Active(level1, level2)
+                            "
+                            (click)="level2Clicked(level1, level2)"
+                            (keydown.enter)="level2Clicked(level1, level2)"
+                            (keydown.space)="
+                              $event.preventDefault();
+                              level2Clicked(level1, level2)
+                            ">
+                            @if (icon(level2)) {
+                              <mat-icon
+                                [ngStyle]="{
+                                  color: color(level2),
+                                }">
+                                {{ icon(level2) }}
+                              </mat-icon>
+                            }
+
+                            <span
+                              [ngStyle]="{
+                                color: color(level2),
+                              }">
+                              {{ label(level2) }}
+                            </span>
+                          </a>
+                        }
+                      }
                     }
+                  </div>
+                </mat-expansion-panel>
+              } @else {
+                <a
+                  class="admin-level1-item"
+                  role="button"
+                  [attr.tabindex]="menuContext.isDisabled(level1) ? -1 : 0"
+                  [attr.aria-disabled]="menuContext.isDisabled(level1)"
+                  [class.admin-menu-item-disabled]="
+                    menuContext.isDisabled(level1)
+                  "
+                  [matTooltip]="menuContext.disabledTooltip(level1)"
+                  [class.admin-level1-item-active]="isLevel1Active(level1)"
+                  (click)="level1Clicked(level1)"
+                  (keydown.enter)="level1Clicked(level1)"
+                  (keydown.space)="
+                    $event.preventDefault(); level1Clicked(level1)
+                  ">
+                  @if (icon(level1)) {
+                    <mat-icon
+                      [ngStyle]="{
+                        color: color(level1),
+                      }">
+                      {{ icon(level1) }}
+                    </mat-icon>
                   }
-                </div>
-              </mat-expansion-panel>
-            } @else {
-              <a
-                class="admin-level1-item"
-                [class.admin-level1-item-active]="isLevel1Active(level1)"
-                (click)="level1Clicked(level1)">
-                @if (icon(level1)) {
-                  <mat-icon
+
+                  <span
                     [ngStyle]="{
                       color: color(level1),
                     }">
-                    {{ icon(level1) }}
-                  </mat-icon>
-                }
-
-                <span
-                  [ngStyle]="{
-                    color: color(level1),
-                  }">
-                  {{ label(level1) }}
-                </span>
-              </a>
+                    {{ label(level1) }}
+                  </span>
+                </a>
+              }
             }
           }
         </mat-accordion>
