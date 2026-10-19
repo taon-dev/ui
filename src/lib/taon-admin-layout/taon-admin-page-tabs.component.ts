@@ -41,8 +41,16 @@ export class TaonAdminPageTabsComponent implements OnInit {
     inject(TaonAdminMenuContext, { optional: true }) ??
     new TaonAdminMenuContext();
 
+  private _routes: Routes = [];
+
   @Input({ required: true })
-  routes!: Routes;
+  set routes(routes: Routes) {
+    this._routes = routes.filter(f => !f.redirectTo);
+  }
+
+  get routes(): Routes {
+    return this._routes;
+  }
 
   @Input()
   basePath = '';
@@ -62,6 +70,7 @@ export class TaonAdminPageTabsComponent implements OnInit {
   constructor(private readonly router: Router) {}
 
   async ngOnInit(): Promise<void> {
+    // console.log(this.routes);
     await this.refresh();
 
     this.router.events

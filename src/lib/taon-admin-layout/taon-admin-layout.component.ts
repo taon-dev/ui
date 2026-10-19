@@ -57,14 +57,22 @@ export class TaonAdminLayoutComponent
     inject(TaonAdminMenuContext, { optional: true }) ??
     new TaonAdminMenuContext();
 
+  private _routes: Routes = [];
+
   @Input({ required: true })
-  routes!: Routes;
+  set routes(routes: Routes) {
+    this._routes = routes.filter(f => !f.redirectTo);
+  }
+
+  get routes(): Routes {
+    return this._routes;
+  }
 
   @Input()
   basePath = '';
 
   @Input()
-  outlet: string;
+  outlet!: string;
 
   protected readonly layoutWidth = signal<number | undefined>(undefined);
 
