@@ -7,7 +7,6 @@ export * from './build-info._auto-generated_';
 export * from './my-organization-proj'; 
 export * from './start-cli'; 
 export * from './directives/taon-horizontal-wheel-scrolling.directive'; // @browser
-export * from './i18n/lib.translation'; 
 export * from './taon-admin-layout/taon-admin-layout.component'; // @browser
 export * from './taon-admin-layout/taon-admin-layout.models'; 
 export * from './taon-admin-layout/taon-admin-menu-context'; 
@@ -30,5 +29,3 @@ export * from './taon-draggable-button-panel/taon-draggable-button-panel.compone
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.models'; 
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.routes'; // @browser
 export * from './taon-under-construction/taon-under-construction.component'; // @browser
-export * from './taon-backoffice-notifications/i18n/taon-backoffice-notifications.translation'; 
-export * from './taon-under-construction/i18n/taon-under-construction.translation'; 
