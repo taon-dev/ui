@@ -90,6 +90,10 @@ export class TaonDraggableButtonPanelComponent<TContext = unknown>
     this.currentState.set(state);
   }
 
+  @Input()
+  initialState: TaonDraggableButtonPanelState =
+    TaonDraggableButtonPanelState.WINDOW;
+
   @Output()
   readonly stateChange = new EventEmitter<TaonDraggableButtonPanelState>();
 
@@ -338,7 +342,7 @@ export class TaonDraggableButtonPanelComponent<TContext = unknown>
 
   //#region methods / open
   protected open(): void {
-    void this.setState(TaonDraggableButtonPanelState.WINDOW);
+    void this.setState(this.initialState);
   }
 
   protected toggle(): void {
@@ -526,6 +530,8 @@ export class TaonDraggableButtonPanelComponent<TContext = unknown>
     > = {
       [TaonDraggableButtonPanelState.CLICKABLE_BUTTON]: [
         TaonDraggableButtonPanelState.WINDOW,
+        TaonDraggableButtonPanelState.FULL_SCREEN_DRAGGABLE,
+        TaonDraggableButtonPanelState.FULL_SCREEN_LOCKED,
       ],
 
       [TaonDraggableButtonPanelState.WINDOW]: [
