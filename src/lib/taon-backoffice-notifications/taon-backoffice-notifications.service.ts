@@ -20,6 +20,10 @@ export class TaonBackofficeNotificationsService {
   private readonly toast = inject(HotToastService);
   //#endregion
 
+  constructor() {
+    this.toast.defaultConfig.dismissible = true;
+  }
+
   //#region private methods
   private normalize(input: TaonNotificationInput): TaonNotificationOptions {
     return typeof input === 'string' ? { title: input } : input;
