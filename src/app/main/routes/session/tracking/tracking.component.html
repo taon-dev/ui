@@ -1,7 +1,11 @@
-<taon-datatable
-  [entityCrudController]="crud"
-  [columns]="columns"
-  [allowedColumns]="['id', 'name']"
-  searchMode="advanced"
-  (addingItem)="add()">
-</taon-datatable>
+<taon-detachable-dialog-content
+  title="Tracking"
+  [component]="TrackingComponent">
+  <taon-datatable
+    [entityCrudController]="crud"
+    [columns]="columns"
+    [allowedColumns]="['id', 'name']"
+    searchMode="advanced"
+    (addingItem)="add()">
+  </taon-datatable>
+</taon-detachable-dialog-content>

@@ -25,6 +25,7 @@ export * from './taon-confirm-dialog/taon-confirm-dialog.models';
 export * from './taon-datatable/taon-datatable.component'; // @browser
 export * from './taon-datatable/taon-datatable.models'; 
 export * from './taon-datatable/taon-datatable.routes'; // @browser
+export * from './taon-detachable-dialog-content/taon-detached-window-content.component'; // @browser
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.component'; // @browser
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.models'; 
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.routes'; // @browser

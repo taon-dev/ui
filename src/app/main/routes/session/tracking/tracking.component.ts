@@ -3,7 +3,11 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MtxGridColumn } from '@ng-matero/extensions/grid';
-import { TaonDatatableComponent } from '@taon-dev/ui/src';
+import {
+  TaonDatatableComponent,
+  TaonDetachableDialogContentComponent,
+  TaonDetachedWindowsHostComponent,
+} from '@taon-dev/ui/src';
 
 import { UserApiService } from '../../../../../app';
 //#endregion
@@ -13,9 +17,16 @@ import { UserApiService } from '../../../../../app';
   templateUrl: './tracking.component.html',
   styleUrls: ['./tracking.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, RouterOutlet, TaonDatatableComponent],
+  imports: [
+    AsyncPipe,
+    RouterOutlet,
+    TaonDatatableComponent,
+    TaonDetachableDialogContentComponent,
+  ],
 })
 export class TrackingComponent {
+  TrackingComponent = TrackingComponent;
+
   userApiService = inject(UserApiService);
 
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type

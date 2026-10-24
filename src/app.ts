@@ -46,7 +46,10 @@ import Aura from '@primeng/themes/aura'; // @browser
 import { Translation, TranslationManager } from '@taon-dev/i18n/src';
 // TranslationManager.globalDefautlLanguageOverride = 'pl-PL';
 import { TranslateDirective } from '@taon-dev/i18n/src'; // @browser
-import { TaonDraggableButtonPanelComponent } from '@taon-dev/ui/src'; // @browser
+import {
+  TaonDetachedWindowsHostComponent,
+  TaonDraggableButtonPanelComponent,
+} from '@taon-dev/ui/src'; // @browser
 import { providePrimeNG } from 'primeng/config'; // @browser
 import { BehaviorSubject, Observable, map, switchMap } from 'rxjs';
 import {
@@ -88,6 +91,43 @@ const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP, {
 });
 //#endregion
 
+//#region @browser
+import { TaonDetachableDialogContentComponent } from '@taon-dev/ui/src';
+
+@Component({
+  selector: 'app-users',
+  standalone: true,
+  imports: [TaonDetachableDialogContentComponent],
+  styles: '    :host {      display: block;    }  ',
+  template: `
+    <taon-detachable-dialog-content
+      title="Users"
+      [component]="UsersComponent">
+      <h2>Users</h2>
+
+      @for (user of users; track user.id) {
+        <div>
+          {{ user.name }}
+        </div>
+      }
+    </taon-detachable-dialog-content>
+  `,
+})
+export class UsersComponent {
+  /**
+   * Expose component class to template so it can be
+   * instantiated again when detached.
+   */
+  readonly UsersComponent = UsersComponent;
+
+  users = [
+    { id: 1, name: 'John' },
+    { id: 2, name: 'Kate' },
+    { id: 3, name: 'Mark' },
+  ];
+}
+//#endregion
+
 //#region ui component
 //#region @browser
 @Component({
@@ -106,10 +146,13 @@ const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP, {
     TranslateDirective,
     JsonPipe,
     TaonDraggableButtonPanelComponent,
+    UsersComponent,
+    TaonDetachedWindowsHostComponent,
   ],
   template: `
     @if (itemsLoaded()) {
       <router-outlet />
+      <taon-detached-windows-host />
 
       <taon-draggable-button-panel
         title="Taon Admin"
@@ -117,6 +160,9 @@ const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP, {
         basePath="main">
         <router-outlet name="admin" />
       </taon-draggable-button-panel>
+      <br />
+      <hr />
+      <app-users />
     }
   `,
 })
