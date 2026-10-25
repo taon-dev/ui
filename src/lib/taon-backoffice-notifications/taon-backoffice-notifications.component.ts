@@ -35,6 +35,23 @@ export class TaonBackofficeNotificationsComponent {
     err: HttpResponseError<RestErrorResponseWrapper>,
   ) => HttpResponseError<RestErrorResponseWrapper>;
 
+  private readonly shownNotifications = new Set<string>();
+
+  private showErrorNotification(title: string, details?: string): void {
+    const key = JSON.stringify([title, details]);
+
+    if (this.shownNotifications.has(key)) {
+      return;
+    }
+
+    this.shownNotifications.add(key);
+
+    this.notification.error({
+      title,
+      details,
+    });
+  }
+
   //#endregion
 
   //#region constructor
@@ -60,11 +77,12 @@ export class TaonBackofficeNotificationsComponent {
             `[@taon-dev/sudo] Skipping notificaiton for message "${jsonMsg.message}" (code=${statusCode})`,
           );
         } else {
-          this.notification.error({
-            title: t.translate(jsonMsg.message) || t.gettext('Unknown error'),
+          const title =
+            t.translate(jsonMsg.message) || t.gettext('Unknown error');
 
-            details: jsonMsg?.details,
-          });
+          const details = jsonMsg?.details;
+
+          this.showErrorNotification(title, details);
         }
       });
   }
