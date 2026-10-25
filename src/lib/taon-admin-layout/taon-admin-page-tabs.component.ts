@@ -277,7 +277,7 @@ export class TaonAdminPageTabsComponent implements OnInit {
 
     let children = await this.loadChildren(activeRoute);
 
-    children = this.unwrapEmptyPathRoutes(children);
+    children = this.unwrapEmptyPathRoutes(children).filter(f => !!f.data);
 
     if (!children.length) {
       return;
