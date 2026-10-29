@@ -1,8 +1,12 @@
 //#region imports
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { TranslateDirective, Translation } from '@taon-dev/i18n/src';
 import { TaonAdminLayoutComponent } from '@taon-dev/ui/src';
+const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
+
+import { Taon } from 'taon/src';
 
 import MainRoutes from './main.routes';
 //#endregion
@@ -12,9 +16,16 @@ import MainRoutes from './main.routes';
   templateUrl: './main.container.html',
   styleUrls: ['./main.container.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, RouterOutlet, TaonAdminLayoutComponent],
+  imports: [
+    AsyncPipe,
+    RouterOutlet,
+    TranslateDirective,
+    TaonAdminLayoutComponent,
+  ],
 })
-export class MainContainer {
+export class MainContainer implements OnInit {
+  readonly t = t.for(this);
+
   get adminRoutes() {
     return MainRoutes[0].children;
   }
@@ -22,6 +33,6 @@ export class MainContainer {
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
-    console.log(this.adminRoutes)
+    console.log(this.adminRoutes);
   }
 }

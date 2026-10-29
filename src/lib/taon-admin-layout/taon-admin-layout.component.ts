@@ -61,7 +61,7 @@ export class TaonAdminLayoutComponent
 {
   //#region fields and getters
 
-  t = t.for(this);
+  protected readonly t = t.for(this);
 
   protected readonly menuContext =
     inject(TaonAdminMenuContext, { optional: true }) ??

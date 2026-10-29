@@ -1,0 +1,17 @@
+msgid ""
+msgstr ""
+"Language: de-DE\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/app/main/main.routes.ts:17
+msgid "Dashboard"
+msgstr "Das Dashboard"
+
+#: src/app/main/main.routes.ts:28
+msgid "Session"
+msgstr "Sitzung"
+
+#: src/app/main/main.routes.ts:36
+msgid "Users"
+msgstr "Benutzer"

@@ -6,4 +6,4 @@ msgstr ""
 
 #: src/lib/my-organization-proj.ts:7
 msgid "My Translated Company Name!"
-msgstr "Moja Przetłumaczona Nazwa Firmy"
+msgstr "Moje tłumaczone nazwisko firmy!"

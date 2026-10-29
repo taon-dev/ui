@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Language: pl-PL\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/taon-datatable/taon-datatable.component.html:38
+msgid "Filters"
+msgstr "Filtry"
+
+#: src/lib/taon-datatable/taon-datatable.component.html:66
+msgid "Add"
+msgstr "Dodać"
+
+#: src/lib/taon-datatable/taon-datatable.component.html:101
+msgid "Clear"
+msgstr "Jasne"
+
+#: src/lib/taon-datatable/taon-datatable.component.html:111
+msgid "Apply filters"
+msgstr "Wykorzystanie filtrów"
+
+#: src/lib/taon-datatable/taon-datatable.component.html:128
+msgid "Loading..."
+msgstr "Ładowanie..."

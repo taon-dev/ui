@@ -19,7 +19,7 @@
       mat-button
       type="button"
       (click)="cancel()">
-      {{ data.cancelText || 'Cancel' }}
+      {{ data.cancelText || t.gettext('Cancel') }}
     </button>
 
     <button
@@ -28,7 +28,7 @@
       type="button"
       class="!rounded-full !px-6"
       (click)="confirm()">
-      {{ data.confirmText || 'OK' }}
+      {{ data.confirmText || t.gettext('OK') }}
     </button>
   </div>
 </div>

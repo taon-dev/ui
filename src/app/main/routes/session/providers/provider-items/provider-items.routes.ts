@@ -1,8 +1,12 @@
 //#region imports
 import { Routes } from '@angular/router';
 import { adminLazyRoute } from '@taon-dev/ui/src';
+import { Translation } from '@taon-dev/i18n/src';
+import { Taon } from 'taon/src';
 
 //#endregion
+
+const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
 
 export const ProviderItemsRoutes: Routes = [
   {
@@ -13,7 +17,7 @@ export const ProviderItemsRoutes: Routes = [
       adminLazyRoute({
         path: 'provider-info-comparasion',
 
-        menuItem: 'Provider comprasion tab',
+        menuItem: t.signal.gettext('Provider comprasion tab'),
         icon: 'monitoring',
 
         loader: () =>

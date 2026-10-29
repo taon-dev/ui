@@ -1,0 +1,17 @@
+msgid ""
+msgstr ""
+"Language: de-DE\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/app/main/main.container.html:9
+msgid "My Application"
+msgstr "Meine Anwendung"
+
+#: src/app/main/main.container.html:16
+msgid "Taon Admin v1.0"
+msgstr "Taon Admin v1.0"
+
+#: src/app/main/main.container.html:22
+msgid "Conetn footer Admin v1.0"
+msgstr "Verknüpfung Fußbüro Admin v1.0"

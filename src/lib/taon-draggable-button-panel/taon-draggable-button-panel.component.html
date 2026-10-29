@@ -55,7 +55,7 @@
           <button
             mat-icon-button
             type="button"
-            matTooltip="Window mode"
+            [matTooltip]="t.gettext('Window mode')"
             (click)="windowMode()">
             <mat-icon>filter_none</mat-icon>
           </button>
@@ -65,7 +65,7 @@
           <button
             mat-icon-button
             type="button"
-            matTooltip="Full screen"
+            [matTooltip]="t.gettext('Full screen')"
             (click)="fullScreenDraggable()">
             <mat-icon>fullscreen</mat-icon>
           </button>
@@ -75,7 +75,7 @@
           <button
             mat-icon-button
             type="button"
-            matTooltip="Lock full screen"
+            [matTooltip]="t.gettext('Lock full screen')"
             (click)="lockFullScreen()">
             <mat-icon>lock_open</mat-icon>
           </button>
@@ -83,7 +83,7 @@
           <button
             mat-icon-button
             type="button"
-            matTooltip="Unlock"
+            [matTooltip]="t.gettext('Unlock')"
             (click)="fullScreenDraggable()">
             <mat-icon>lock</mat-icon>
           </button>
@@ -94,7 +94,7 @@
       <button
         mat-icon-button
         type="button"
-        matTooltip="Close admin panel"
+        [matTooltip]="t.gettext('Close admin panel')"
         (click)="returnToButton()">
         <mat-icon>close</mat-icon>
       </button>

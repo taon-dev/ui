@@ -1,0 +1,13 @@
+msgid ""
+msgstr ""
+"Language: pl-PL\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/app/main/routes/session/providers/providers.routes.ts:18
+msgid "Provider info tab"
+msgstr "Zakładka informacji o dostawcy"
+
+#: src/app/main/routes/session/providers/providers.routes.ts:27
+msgid "Provider items tab"
+msgstr "Zakładka pozycje dostawcy"

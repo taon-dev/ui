@@ -1,0 +1,9 @@
+msgid ""
+msgstr ""
+"Language: pl-PL\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/taon-backoffice-notifications/taon-error-toast.component.ts:25
+msgid "Click for details"
+msgstr "Kliknij na szczegóły"

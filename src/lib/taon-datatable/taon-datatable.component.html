@@ -12,7 +12,7 @@
 
         <input
           matInput
-          placeholder="Search..."
+          [placeholder]="t.gettext('Search...')"
           [value]="searchValue"
           (input)="searchChanged($any($event.target).value)" />
 
@@ -35,7 +35,7 @@
           (click)="toggleAdvancedSearch()">
           <mat-icon> tune </mat-icon>
 
-          Filters
+          {{ t.gettext('Filters') }}
 
           @if (advancedSearchOpened) {
             <mat-icon> expand_less </mat-icon>
@@ -49,7 +49,7 @@
       <button
         mat-icon-button
         type="button"
-        title="Refresh"
+        [title]="t.gettext('Refresh')"
         (click)="reload()">
         <mat-icon> refresh </mat-icon>
       </button>
@@ -63,7 +63,7 @@
           (click)="addingItem.emit()">
           <mat-icon> add </mat-icon>
 
-          Add
+          {{ t.gettext('Add') }}
         </button>
       }
     </div>
@@ -98,7 +98,7 @@
           (click)="clearSearch()">
           <mat-icon> filter_alt_off </mat-icon>
 
-          Clear
+          {{ t.gettext('Clear') }}
         </button>
 
         <button
@@ -108,7 +108,7 @@
           (click)="applyAdvancedFilters()">
           <mat-icon> filter_alt </mat-icon>
 
-          Apply filters
+          {{ t.gettext('Apply filters') }}
         </button>
       </div>
     </div>
@@ -125,7 +125,7 @@
           class="flex items-center gap-2 rounded-md bg-white px-4 py-2 shadow dark:bg-gray-800">
           <mat-icon class="animate-spin"> refresh </mat-icon>
 
-          Loading...
+          {{ t.gettext('Loading...') }}
         </div>
       </div>
     }

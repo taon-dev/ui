@@ -1,0 +1,9 @@
+msgid ""
+msgstr ""
+"Language: pl-PL\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/app/main/routes/session/providers/provider-items/provider-items.component.html:3
+msgid "provider-items works!"
+msgstr "Dostawcy-obce działają!"

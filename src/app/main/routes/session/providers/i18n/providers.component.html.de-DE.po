@@ -1,0 +1,9 @@
+msgid ""
+msgstr ""
+"Language: de-DE\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/app/main/routes/session/providers/providers.component.html:3
+msgid "providers works!"
+msgstr "Die Anbieter funktionieren!"

@@ -1,0 +1,19 @@
+msgid ""
+msgstr ""
+"Language: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/taon-purchase-status/taon-purchase-status.dialog.component.html:2
+#: src/lib/taon-purchase-status/taon-purchase-status.dialog.component.html:4
+msgid "Payment successful"
+msgstr "Payment successful"
+
+#: src/lib/taon-purchase-status/taon-purchase-status.dialog.component.html:2
+#: src/lib/taon-purchase-status/taon-purchase-status.dialog.component.html:5
+msgid "Payment cancelled"
+msgstr "Payment cancelled"
+
+#: src/lib/taon-purchase-status/taon-purchase-status.dialog.component.html:17
+msgid "OK"
+msgstr "OK"

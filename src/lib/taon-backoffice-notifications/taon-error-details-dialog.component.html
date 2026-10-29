@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Error details</h2>
+<h2 mat-dialog-title>{{ t.gettext('Error details') }}</h2>
 
 <mat-dialog-content>
   <div class="error-message">
@@ -6,12 +6,12 @@
   </div>
 
   <div class="editor-selector">
-    <span class="editor-selector-label"> I am using editor: </span>
+    <span class="editor-selector-label">{{ t.gettext('I am using editor:') }}</span>
 
     <mat-button-toggle-group
       [value]="editor"
       (change)="setEditor($event.value)"
-      aria-label="Code editor">
+      [attr.aria-label]="t.gettext('Code editor')">
       <mat-button-toggle value="vscode"> VS Code </mat-button-toggle>
 
       <mat-button-toggle value="vscodium"> VSCodium </mat-button-toggle>
@@ -22,7 +22,13 @@
     class="error-details"><code>@for (stackLine of stackLines; track $index) {
 @if (stackLine.file) {<a
   class="stack-link"
-  title="Open {{ stackLine.file }}:{{ stackLine.line }}:{{ stackLine.column }}"
+  [title]="
+    t.gettext('Open [[ file ]]:[[ line ]]:[[ column ]]', {
+      file: stackLine.file,
+      line: stackLine.line,
+      column: stackLine.column,
+    })
+  "
   (click)="openStackLine(stackLine)">{{ stackLine.text }}</a>} @else {{{ stackLine.text }}}{{ '\n' }}
 }</code></pre>
 </mat-dialog-content>
@@ -31,6 +37,6 @@
   <button
     mat-button
     mat-dialog-close>
-    Close
+    {{ t.gettext('Close') }}
   </button>
 </mat-dialog-actions>

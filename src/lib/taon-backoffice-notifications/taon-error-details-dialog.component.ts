@@ -3,7 +3,11 @@ import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { Translation } from '@taon-dev/i18n/src';
+import { Taon } from 'taon/src';
 //#endregion
+
+const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
 
 export interface TaonErrorDetailsDialogData {
   message: string;
@@ -28,6 +32,8 @@ interface TaonStackTraceLine {
 })
 export class TaonErrorDetailsDialogComponent {
   //#region injections
+  readonly t = t.for(this);
+
   readonly data = inject<TaonErrorDetailsDialogData>(MAT_DIALOG_DATA);
   //#endregion
 

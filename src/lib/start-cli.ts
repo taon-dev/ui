@@ -2,7 +2,11 @@
 import { UtilsJson } from 'tnp-core/src';
 import { Helpers, BaseCommandLineFeature } from 'tnp-helpers/src';
 import { BaseProject, BaseStartConfig } from 'tnp-helpers/src'; // @backend
+import { Translation } from '@taon-dev/i18n/src';
+import { Taon } from 'taon/src';
 //#endregion
+
+const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
 
 //#region CLI / global scope
 /**
@@ -96,7 +100,7 @@ export async function startCli(
       v: 'version',
     },
     callbackNotRecognizedCommand: async () => {
-      Helpers.error(`Command not recognized`, false, true);
+      Helpers.error(t.gettext('Command not recognized'), false, true);
     },
   });
   //#endregion

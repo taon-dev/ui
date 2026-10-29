@@ -1,8 +1,12 @@
 //#region imports
 import { Routes } from '@angular/router';
 import { adminLazyRoute } from '@taon-dev/ui/src';
+import { Translation } from '@taon-dev/i18n/src';
+import { Taon } from 'taon/src';
 
 //#endregion
+
+const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
 
 export const UsersRoutes: Routes = [
   {
@@ -11,7 +15,7 @@ export const UsersRoutes: Routes = [
     children: [
       adminLazyRoute({
         path: 'manager',
-        menuItem: 'Manager',
+        menuItem: t.signal.gettext('Manager'),
         icon: 'admin_panel_settings',
         loader: () =>
           import('./manager/manager.routes').then(m => m.ManagerRoutes),

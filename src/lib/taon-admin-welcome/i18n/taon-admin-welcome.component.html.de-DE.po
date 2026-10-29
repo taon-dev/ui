@@ -1,0 +1,9 @@
+msgid ""
+msgstr ""
+"Language: de-DE\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/taon-admin-welcome/taon-admin-welcome.component.html:3
+msgid "Welcome to Taon Admin"
+msgstr "Willkommen in Taon Admin"

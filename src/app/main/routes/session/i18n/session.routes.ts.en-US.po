@@ -1,0 +1,13 @@
+msgid ""
+msgstr ""
+"Language: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/app/main/routes/session/session.routes.ts:19
+msgid "Tracking"
+msgstr "Tracking"
+
+#: src/app/main/routes/session/session.routes.ts:26
+msgid "Providers"
+msgstr "Providers"

@@ -1,8 +1,12 @@
 //#region imports
 import { Routes } from '@angular/router';
+import { Translation } from '@taon-dev/i18n/src';
 import { adminLazyRoute } from '@taon-dev/ui/src';
+import { Taon } from 'taon/src';
 
 //#endregion
+const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
+
 export const MainRoutes: Routes = [
   {
     path: '',
@@ -10,7 +14,7 @@ export const MainRoutes: Routes = [
     children: [
       adminLazyRoute({
         path: 'dashboard',
-        menuItem: 'Dashboard',
+        menuItem: t.signal.gettext('Dashboard'),
         icon: 'dashboard',
         expandable: false,
         loader: () =>
@@ -21,7 +25,7 @@ export const MainRoutes: Routes = [
 
       adminLazyRoute({
         path: 'session',
-        menuItem: 'Session',
+        menuItem: t.signal.gettext('Session'),
         icon: 'manage_accounts',
         loader: () =>
           import('./routes/session/session.routes').then(m => m.SessionRoutes),
@@ -29,7 +33,7 @@ export const MainRoutes: Routes = [
 
       adminLazyRoute({
         path: 'users',
-        menuItem: 'Users',
+        menuItem: t.signal.gettext('Users'),
         icon: 'group',
         loader: () =>
           import('./routes/users/users.routes').then(m => m.UsersRoutes),

@@ -23,6 +23,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MtxGridColumn, MtxGridModule } from '@ng-matero/extensions/grid';
+import { Translation } from '@taon-dev/i18n/src';
 import { getDefaultModel } from 'ng2-rest/src';
 import {
   BehaviorSubject,
@@ -46,17 +47,20 @@ import {
   TaonPaginationSort,
   TaonPaginationQuery,
   ClassHelpers,
+  Taon,
 } from 'taon/src';
 import { _, json5 } from 'tnp-core/src';
 //#endregion
 
+const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
+
 const defaultColumns: MtxGridColumn[] = [
   {
-    header: 'ID',
+    header: t.gettext('ID'),
     field: 'id',
   },
   {
-    header: 'NAME',
+    header: t.gettext('NAME'),
     field: 'name',
   },
 ];
@@ -86,6 +90,8 @@ type SearchMode = 'simple' | 'advanced';
 })
 export class TaonDatatableComponent implements OnInit {
   //#region fields & getters
+  readonly t = t.for(this);
+
   private readonly cdr = inject(ChangeDetectorRef);
 
   private readonly destroyRef = inject(DestroyRef);

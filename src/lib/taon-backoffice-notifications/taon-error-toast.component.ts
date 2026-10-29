@@ -1,8 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { HotToastRef } from '@ngneat/hot-toast';
+import { Translation } from '@taon-dev/i18n/src';
+import { Taon } from 'taon/src';
 
 import { TaonErrorDetailsDialogComponent } from './taon-error-details-dialog.component';
+
+const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
 
 export interface TaonErrorToastData {
   title: string;
@@ -18,7 +22,7 @@ export interface TaonErrorToastData {
       (click)="showDetails()">
       <div>{{ data.title }}</div>
 
-      <small> Click for details </small>
+      <small>{{ t.gettext('Click for details') }}</small>
     </div>
   `,
   styles: [
@@ -36,6 +40,8 @@ export interface TaonErrorToastData {
   ],
 })
 export class TaonErrorToastComponent {
+  readonly t = t.for(this);
+
   private readonly toastRef =
     inject<HotToastRef<TaonErrorToastData>>(HotToastRef);
 

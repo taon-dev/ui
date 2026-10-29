@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Language: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:1
+msgid "Error details"
+msgstr "Error details"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:9
+msgid "I am using editor:"
+msgstr "I am using editor:"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:14
+msgid "Code editor"
+msgstr "Code editor"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:40
+msgid "Close"
+msgstr "Close"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:26
+msgid "Open [[ file ]]:[[ line ]]:[[ column ]]"
+msgstr "Open [[ file ]]:[[ line ]]:[[ column ]]"

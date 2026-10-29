@@ -6,4 +6,4 @@ msgstr ""
 
 #: src/lib/taon-backoffice-notifications/taon-backoffice-notifications.component.ts:81
 msgid "Unknown error"
-msgstr ""
+msgstr "Unknown error"

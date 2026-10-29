@@ -1,0 +1,13 @@
+msgid ""
+msgstr ""
+"Language: pl-PL\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/app/main/routes/session/tracking/tracking.component.ts:45
+msgid "ID"
+msgstr "Posiadanie dowodu"
+
+#: src/app/main/routes/session/tracking/tracking.component.ts:50
+msgid "NAME"
+msgstr "Nazwa"

@@ -1,0 +1,13 @@
+msgid ""
+msgstr ""
+"Language: de-DE\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/taon-confirm-dialog/taon-confirm-dialog.component.html:22
+msgid "Cancel"
+msgstr "Abrufen"
+
+#: src/lib/taon-confirm-dialog/taon-confirm-dialog.component.html:31
+msgid "OK"
+msgstr "- Ich bin in Ordnung."

@@ -29,8 +29,12 @@ import {
   Params,
   Router,
 } from '@angular/router';
+import { Translation } from '@taon-dev/i18n/src';
 import { BehaviorSubject } from 'rxjs';
+import { Taon } from 'taon/src';
 //#endregion
+
+const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
 
 //#region tokens
 export const TAON_IS_DETACHED_WINDOW = new InjectionToken<boolean>(
@@ -582,7 +586,7 @@ export class TaonDetachedWindowsHostComponent {
           <button
             mat-icon-button
             type="button"
-            matTooltip="Detach"
+            [matTooltip]="t.gettext('Detach')"
             (click)="detach()">
             <mat-icon> open_in_new </mat-icon>
           </button>
@@ -597,6 +601,8 @@ export class TaonDetachedWindowsHostComponent {
 })
 export class TaonDetachableDialogContentComponent {
   //#region injections
+  readonly t = t.for(this);
+
   private readonly route = inject(ActivatedRoute);
 
   private readonly router = inject(Router);
@@ -637,7 +643,8 @@ export class TaonDetachableDialogContentComponent {
     };
 
     this.windowsService.open({
-      title: this.title || this.component.name || 'Detached window',
+      title:
+        this.title || this.component.name || this.t.gettext('Detached window'),
 
       component: this.component,
 

@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Language: de-DE\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:1
+msgid "Error details"
+msgstr "Fehlerdaten"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:9
+msgid "I am using editor:"
+msgstr "Ich benutze Editor:"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:14
+msgid "Code editor"
+msgstr "Code-Editor"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:40
+msgid "Close"
+msgstr "Schließen"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:26
+msgid "Open [[ file ]]:[[ line ]]:[[ column ]]"
+msgstr "Öffnung von Stadtinterpolation0Bereichhalter:Stadtinterpolation1Bereichhalter:Stadtinterpolation2Bereichhalter [[ file ]] [[ line ]] [[ column ]]"

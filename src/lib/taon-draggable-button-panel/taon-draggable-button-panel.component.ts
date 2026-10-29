@@ -18,12 +18,16 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NavigationEnd, Router } from '@angular/router';
+import { Translation } from '@taon-dev/i18n/src';
 import { filter, firstValueFrom, Subscription, take } from 'rxjs';
+import { Taon } from 'taon/src';
 
 import { TaonAdminMenuContext } from '../taon-admin-layout/taon-admin-menu-context';
 
 import { TaonDraggableButtonPanelState } from './taon-draggable-button-panel.models';
 //#endregion
+
+const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
 
 @Component({
   selector: 'taon-draggable-button-panel',
@@ -46,6 +50,8 @@ export class TaonDraggableButtonPanelComponent<TContext = unknown>
   implements OnInit, OnDestroy
 {
   //#region fields and getters
+  readonly t = t.for(this);
+
   readonly State = TaonDraggableButtonPanelState;
 
   private readonly menuContext = inject(TaonAdminMenuContext);
@@ -65,7 +71,7 @@ export class TaonDraggableButtonPanelComponent<TContext = unknown>
   buttonIcon = 'admin_panel_settings';
 
   @Input()
-  title = 'Admin';
+  title = this.t.gettext('Admin');
 
   /**
    * Named outlet containing this panel's application.

@@ -1,0 +1,19 @@
+// THIS FILE IS GENERATED - DO NOT MODIFY
+import { CoreModels } from 'tnp-core/src';
+
+// join interface type here
+import { EnUsTraslationOverrideSrcAppMainRoutesSessionProvidersProviderItemsProviderInfoComparasionProviderInfoComparasionComponentHtml } from './provider-info-comparasion.component.html.en-US.i18n.data';
+import { PlPlTraslationOverrideSrcAppMainRoutesSessionProvidersProviderItemsProviderInfoComparasionProviderInfoComparasionComponentHtml } from './provider-info-comparasion.component.html.pl-PL.i18n.data';
+import { DeDeTraslationOverrideSrcAppMainRoutesSessionProvidersProviderItemsProviderInfoComparasionProviderInfoComparasionComponentHtml } from './provider-info-comparasion.component.html.de-DE.i18n.data';
+import { EnUsTraslationOverrideSrcAppMainRoutesSessionProvidersProviderItemsProviderInfoComparasionProviderInfoComparasionComponentTs } from './provider-info-comparasion.component.ts.en-US.i18n.data';
+import { PlPlTraslationOverrideSrcAppMainRoutesSessionProvidersProviderItemsProviderInfoComparasionProviderInfoComparasionComponentTs } from './provider-info-comparasion.component.ts.pl-PL.i18n.data';
+import { DeDeTraslationOverrideSrcAppMainRoutesSessionProvidersProviderItemsProviderInfoComparasionProviderInfoComparasionComponentTs } from './provider-info-comparasion.component.ts.de-DE.i18n.data';;
+export type ProviderInfoComparasionOverride = CoreModels.DeepPartial<EnUsTraslationOverrideSrcAppMainRoutesSessionProvidersProviderItemsProviderInfoComparasionProviderInfoComparasionComponentHtml 
+| PlPlTraslationOverrideSrcAppMainRoutesSessionProvidersProviderItemsProviderInfoComparasionProviderInfoComparasionComponentHtml 
+| DeDeTraslationOverrideSrcAppMainRoutesSessionProvidersProviderItemsProviderInfoComparasionProviderInfoComparasionComponentHtml 
+| EnUsTraslationOverrideSrcAppMainRoutesSessionProvidersProviderItemsProviderInfoComparasionProviderInfoComparasionComponentTs 
+| PlPlTraslationOverrideSrcAppMainRoutesSessionProvidersProviderItemsProviderInfoComparasionProviderInfoComparasionComponentTs 
+| DeDeTraslationOverrideSrcAppMainRoutesSessionProvidersProviderItemsProviderInfoComparasionProviderInfoComparasionComponentTs>;
+
+ // THIS FILE IS GENERATED - DO NOT MODIFY
+        

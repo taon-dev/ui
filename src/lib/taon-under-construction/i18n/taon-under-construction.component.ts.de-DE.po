@@ -1,0 +1,13 @@
+msgid ""
+msgstr ""
+"Language: de-DE\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/taon-under-construction/taon-under-construction.component.ts:19
+msgid "Coming soon"
+msgstr "Ich komme bald."
+
+#: src/lib/taon-under-construction/taon-under-construction.component.ts:22
+msgid "This section is currently under construction and will be available soon."
+msgstr "Dieser Abschnitt ist derzeit in Bau und wird bald verfügbar sein."

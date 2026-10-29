@@ -6,4 +6,4 @@ msgstr ""
 
 #: src/app.ts:172
 msgid "Example users from backend API:"
-msgstr "Przykładowi użytkownicy z serwera API"
+msgstr "Przykład użytkowników z backend API:"

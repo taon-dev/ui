@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Language: pl-PL\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:1
+msgid "Error details"
+msgstr "Szczegóły błędu"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:9
+msgid "I am using editor:"
+msgstr "Używam edytoru:"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:14
+msgid "Code editor"
+msgstr "Edytora kodu"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:40
+msgid "Close"
+msgstr "/Zbliżaj"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:26
+msgid "Open [[ file ]]:[[ line ]]:[[ column ]]"
+msgstr "Otwarte Miasto Interpolacja0Właskobiorca:Miasto Interpolacja1Właskobiorca:Miasto Interpolacja2Właskobiorca [[ file ]] [[ line ]] [[ column ]]"

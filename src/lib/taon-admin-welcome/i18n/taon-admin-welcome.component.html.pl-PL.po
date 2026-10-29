@@ -6,4 +6,4 @@ msgstr ""
 
 #: src/lib/taon-admin-welcome/taon-admin-welcome.component.html:3
 msgid "Welcome to Taon Admin"
-msgstr "Witaj w Taon Admin"
+msgstr "Witamy w adminie Taon"
