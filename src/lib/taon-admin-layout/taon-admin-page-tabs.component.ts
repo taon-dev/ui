@@ -11,7 +11,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NavigationEnd, Route, Router, Routes } from '@angular/router';
 import { filter } from 'rxjs';
 
-import { TaonAdminRoute } from './taon-admin-layout.models';
+import {
+  resolveTaonAdminMenuItem,
+  TaonAdminRoute,
+} from './taon-admin-layout.models';
 import { TaonAdminMenuContext } from './taon-admin-menu-context';
 
 export interface TaonAdminTabLevel {
@@ -85,7 +88,10 @@ export class TaonAdminPageTabsComponent implements OnInit {
   // ===========================================================================
 
   protected label(route: Route): string {
-    return route.data?.['menuItem'] ?? this.startCase(route.path ?? '');
+    return (
+      resolveTaonAdminMenuItem(route.data?.['menuItem']) ??
+      this.startCase(route.path ?? '')
+    );
   }
 
   protected isActive(level: TaonAdminTabLevel, route: Route): boolean {

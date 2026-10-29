@@ -6,6 +6,20 @@ Hello from Standalone Project
 
 ## Context-aware admin navigation
 
+`menuItem` accepts a plain string, a function returning a string, or an Angular
+`Signal<string>`:
+
+```ts
+menuItem: 'Users',
+menuItem: () => `Users (${userCount()})`,
+menuItem: usersLabel, // e.g. signal('Users') or computed(() => 'Users')
+```
+
+These are alternative values for the same option. Functions and signals are read
+when rendering sidebar items and nested tabs, so signal updates refresh labels
+without reloading routes. Existing string labels remain supported. Omitting
+`menuItem` keeps the label derived from the route path.
+
 `adminLazyRoute<TContext>()` accepts any application-defined context type.
 Existing routes without context callbacks continue to work.
 

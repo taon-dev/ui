@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
@@ -23,12 +24,19 @@ import {
   RouterOutlet,
   Routes,
 } from '@angular/router';
-import { filter } from 'rxjs';
+import { Translation } from '@taon-dev/i18n/src';
+import { filter, Subscription } from 'rxjs';
+import { Taon } from 'taon/src';
 
-import { TaonAdminRoute } from './taon-admin-layout.models';
+import {
+  resolveTaonAdminMenuItem,
+  TaonAdminRoute,
+} from './taon-admin-layout.models';
 import { TaonAdminMenuContext } from './taon-admin-menu-context';
 import { TaonAdminPageTabsComponent } from './taon-admin-page-tabs.component';
 //#endregion
+
+const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
 
 @Component({
   selector: 'taon-admin-layout',
@@ -52,6 +60,8 @@ export class TaonAdminLayoutComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
   //#region fields and getters
+
+  t = t.for(this);
 
   protected readonly menuContext =
     inject(TaonAdminMenuContext, { optional: true }) ??
@@ -99,6 +109,10 @@ export class TaonAdminLayoutComponent
   private resizeStartWidth = 0;
 
   private resizeStartHeight = 0;
+
+  readonly sub = new Subscription();
+
+  private readonly cdr = inject(ChangeDetectorRef);
 
   private readonly minDialogWidth = 500;
 
@@ -153,6 +167,16 @@ export class TaonAdminLayoutComponent
       // console.log('[windowElement] should not be undefined', windowElement);
       this.updateLayoutSize();
       this.startWindowObservers();
+
+      // TODO @LAST issue with reloading transation without setOneLanguagePernament
+      // this.sub.add(
+      //   this.t.isLoadingLang$.subscribe(() => {
+      //     setTimeout(() => {
+      //       console.log('RERENDER! after timeout', Translation.manager);
+      //       this.cdr.detectChanges();
+      //     }, 1000);
+      //   }),
+      // );
     }, 500); // TODO QUICK_FIX
   }
 
@@ -630,7 +654,10 @@ export class TaonAdminLayoutComponent
   //#region helpers
 
   protected label(route: Route): string {
-    return route.data?.['menuItem'] ?? this.startCase(route.path ?? '');
+    return (
+      resolveTaonAdminMenuItem(route.data?.['menuItem']) ??
+      this.startCase(route.path ?? '')
+    );
   }
 
   protected color(route: Route): string {

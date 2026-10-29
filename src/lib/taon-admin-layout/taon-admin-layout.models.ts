@@ -1,3 +1,4 @@
+import type { Signal } from '@angular/core';
 import type { MatIcon } from '@angular/material/icon'; // @browser
 import { Route } from '@angular/router';
 
@@ -25,7 +26,7 @@ export interface TaonAdminRouteOptions<
   color?: string;
   loader: () => Promise<TaonAdminRoutes>;
 
-  menuItem?: string;
+  menuItem?: string | (() => string) | Signal<string>;
 
   //#region @browser
   icon?: MatIcon['fontIcon'];
@@ -37,6 +38,12 @@ export interface TaonAdminRouteOptions<
 }
 
 export const TaonBaselineBackofficeOutletName = 'admin';
+
+export function resolveTaonAdminMenuItem(
+  menuItem: TaonAdminRouteOptions['menuItem'],
+): string | undefined {
+  return typeof menuItem === 'function' ? menuItem() : menuItem;
+}
 
 //#region @browser
 export function adminLazyRoute<TContext = unknown>(
