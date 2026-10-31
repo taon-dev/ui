@@ -11,3 +11,7 @@ msgstr "Posiadanie dowodu"
 #: src/lib/taon-datatable/taon-datatable.component.ts:63
 msgid "NAME"
 msgstr "Nazwa"
+
+#: src/lib/taon-datatable/taon-datatable.component.ts:110
+msgid "No records found"
+msgstr "Nie znalezionie nic"

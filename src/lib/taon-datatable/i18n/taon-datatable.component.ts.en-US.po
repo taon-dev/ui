@@ -11,3 +11,7 @@ msgstr "ID"
 #: src/lib/taon-datatable/taon-datatable.component.ts:63
 msgid "NAME"
 msgstr "NAME"
+
+#: src/lib/taon-datatable/taon-datatable.component.ts:110
+msgid "No records found"
+msgstr ""

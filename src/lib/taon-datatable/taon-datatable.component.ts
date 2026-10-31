@@ -107,6 +107,8 @@ export class TaonDatatableComponent implements OnInit {
   @Input()
   pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
+  noResultText = this.t.gettext('No records found');
+
   @Input()
   allowedColumns: string[] = [];
 
