@@ -1,0 +1,17 @@
+@if (!taonAdminService.isDesktop()) {
+  <button
+    mat-icon-button
+    type="button"
+    aria-label="Open menu"
+    [attr.aria-expanded]="opened()"
+    (click)="toggle($event)">
+    <mat-icon>{{ icon }}</mat-icon>
+  </button>
+}
+
+<div
+  class="items"
+  [class.mobile]="!taonAdminService.isDesktop()"
+  [class.opened]="opened()">
+  <ng-content />
+</div>

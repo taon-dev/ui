@@ -30,5 +30,6 @@ export * from './taon-detachable-dialog-content/taon-detached-window-content.com
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.component'; // @browser
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.models'; 
 export * from './taon-draggable-button-panel/taon-draggable-button-panel.routes'; // @browser
+export * from './taon-items-hamburger/taon-items-hamburger.component'; // @browser
 export * from './taon-purchase-status/taon-purchase-status.dialog.component'; // @browser
 export * from './taon-under-construction/taon-under-construction.component'; // @browser
