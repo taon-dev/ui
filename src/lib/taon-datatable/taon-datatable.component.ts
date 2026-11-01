@@ -16,6 +16,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -49,6 +50,7 @@ import {
   ClassHelpers,
   Taon,
 } from 'taon/src';
+import { TaonStor } from 'taon-storage/src';
 import { _, json5 } from 'tnp-core/src';
 //#endregion
 
@@ -66,6 +68,25 @@ const defaultColumns: MtxGridColumn[] = [
 ];
 
 type SearchMode = 'simple' | 'advanced';
+
+type TablePaginationPersistence =
+  | 'none'
+  | 'query-params'
+  | 'local-storage'
+  | 'session-storage';
+
+type TableFilterPersistence = 'none' | 'query-params';
+
+interface TablePaginationState {
+  pageNumber: number;
+  pageSize: number;
+}
+
+interface TablePaginationStorage {
+  (): TablePaginationState;
+  ready(): Promise<void>;
+  set(value: TablePaginationState): Promise<void>;
+}
 
 @Component({
   selector: 'taon-datatable',
@@ -95,6 +116,10 @@ export class TaonDatatableComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
   private readonly destroyRef = inject(DestroyRef);
+
+  private readonly route = inject(ActivatedRoute);
+
+  private readonly router = inject(Router);
 
   //#region inputs
 
@@ -132,6 +157,18 @@ export class TaonDatatableComponent implements OnInit {
 
   @Input()
   searchMode: SearchMode = 'advanced';
+
+  @Input()
+  filtersTemplate?: TemplateRef<unknown>;
+
+  @Input()
+  storeTablePagination: TablePaginationPersistence = 'none';
+
+  @Input()
+  storeTableFilters: TableFilterPersistence = 'none';
+
+  @Input()
+  tableId?: string;
 
   /**
    * Optional custom backend pagination method.
@@ -201,6 +238,8 @@ export class TaonDatatableComponent implements OnInit {
 
   expandedRows = new Set<any>();
 
+  private paginationStorage?: TablePaginationStorage;
+
   //#endregion
 
   //#region getters
@@ -240,13 +279,20 @@ export class TaonDatatableComponent implements OnInit {
 
   ngOnInit(): void {
     this.prepareColumns();
-    // console.log({ columns: this.columns });
     this.expandable = Boolean(this.expansionTemplate);
 
     this.showPaginator = _.isBoolean(this.showPaginator)
       ? this.showPaginator
       : Boolean(this.entity) || this.offlineMode;
 
+    if (this.storeTableFilters === 'query-params') {
+      this.columnFilters = this.readQueryFilters();
+    }
+
+    void this.restorePagination().then(() => this.subscribeToData());
+  }
+
+  private subscribeToData(): void {
     this.searchChange$
       .pipe(
         debounceTime(400),
@@ -254,6 +300,7 @@ export class TaonDatatableComponent implements OnInit {
         tap(search => {
           this.searchValue = search;
           this.pageNumber = 1;
+          this.persistPagination();
           this.reload();
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -279,11 +326,13 @@ export class TaonDatatableComponent implements OnInit {
     this.columnFilters = {};
     this.pageNumber = 1;
 
+    this.persistCurrentTableState();
     this.reload();
   }
 
   applyAdvancedFilters(): void {
     this.pageNumber = 1;
+    this.persistCurrentTableState();
     this.reload();
   }
 
@@ -300,7 +349,181 @@ export class TaonDatatableComponent implements OnInit {
 
     this.pageSize = event.pageSize;
 
+    this.persistPagination();
     this.reload();
+  }
+
+  private get tableIdentity(): string {
+    const explicitId = this.tableId?.trim();
+    if (explicitId) {
+      return explicitId;
+    }
+
+    const routePath = this.route.pathFromRoot
+      .map(route => route.snapshot.url.map(segment => segment.path).join('/'))
+      .filter(Boolean)
+      .join('/');
+    const entityName = this.entity ? ClassHelpers.getName(this.entity) : 'table';
+    return `${entityName}-${routePath || 'root'}`;
+  }
+
+  private get queryParamPrefix(): string {
+    return `dt.${encodeURIComponent(this.tableIdentity)}`;
+  }
+
+  private async restorePagination(): Promise<void> {
+    const prefix = this.queryParamPrefix;
+
+    if (this.storeTablePagination === 'query-params') {
+      const pageNumber = Number(
+        this.route.snapshot.queryParamMap.get(`${prefix}.page`),
+      );
+      const pageSize = Number(
+        this.route.snapshot.queryParamMap.get(`${prefix}.pageSize`),
+      );
+      if (Number.isSafeInteger(pageNumber) && pageNumber > 0) {
+        this.pageNumber = pageNumber;
+      }
+      if (Number.isSafeInteger(pageSize) && pageSize > 0) {
+        this.pageSize = pageSize;
+      }
+      return;
+    }
+
+    if (
+      this.storeTablePagination !== 'local-storage' &&
+      this.storeTablePagination !== 'session-storage'
+    ) {
+      return;
+    }
+
+    const options = {
+      keyOrPath: `datatable-${this.tableIdentity}-pagination`,
+      defaultValue: {
+        pageNumber: this.pageNumber,
+        pageSize: this.pageSize,
+      },
+    };
+    this.paginationStorage =
+      this.storeTablePagination === 'local-storage'
+        ? TaonStor.inLocalstorage(options, TaonDatatableComponent)
+        : TaonStor.inSessionStorage(options, TaonDatatableComponent);
+
+    try {
+      await this.paginationStorage.ready();
+      const state = this.paginationStorage();
+      if (Number.isSafeInteger(state.pageNumber) && state.pageNumber > 0) {
+        this.pageNumber = state.pageNumber;
+      }
+      if (Number.isSafeInteger(state.pageSize) && state.pageSize > 0) {
+        this.pageSize = state.pageSize;
+      }
+    } catch (error) {
+      console.error(
+        '[taon-datatable] Unable to restore pagination state',
+        error,
+      );
+    }
+  }
+
+  private persistPagination(): void {
+    const state = {
+      pageNumber: this.pageNumber,
+      pageSize: this.pageSize,
+    };
+
+    if (this.storeTablePagination === 'query-params') {
+      this.updateQueryParams({
+        [`${this.queryParamPrefix}.page`]: String(state.pageNumber),
+        [`${this.queryParamPrefix}.pageSize`]: String(state.pageSize),
+      });
+    } else if (this.paginationStorage) {
+      void this.paginationStorage.set(state).catch(error => {
+        console.error(
+          '[taon-datatable] Unable to persist pagination state',
+          error,
+        );
+      });
+    }
+  }
+
+  private readQueryFilters(): Record<string, string> {
+    const filterPrefix = `${this.queryParamPrefix}.filter.`;
+    const filters: Record<string, string> = {};
+
+    for (const key of this.route.snapshot.queryParamMap.keys) {
+      if (!key.startsWith(filterPrefix)) {
+        continue;
+      }
+      try {
+        const field = decodeURIComponent(key.slice(filterPrefix.length));
+        const value = this.route.snapshot.queryParamMap.get(key);
+        if (field && value !== null) {
+          filters[field] = value;
+        }
+      } catch (error) {
+        console.error('[taon-datatable] Invalid filter query parameter', error);
+      }
+    }
+
+    return filters;
+  }
+
+  private persistFilters(): void {
+    if (this.storeTableFilters !== 'query-params') {
+      return;
+    }
+
+    this.updateQueryParams(this.filterQueryUpdates());
+  }
+
+  private persistCurrentTableState(): void {
+    if (
+      this.storeTablePagination === 'query-params' &&
+      this.storeTableFilters === 'query-params'
+    ) {
+      this.updateQueryParams({
+        [`${this.queryParamPrefix}.page`]: String(this.pageNumber),
+        [`${this.queryParamPrefix}.pageSize`]: String(this.pageSize),
+        ...this.filterQueryUpdates(),
+      });
+      return;
+    }
+
+    this.persistPagination();
+    this.persistFilters();
+  }
+
+  private filterQueryUpdates(): Record<string, string | null> {
+    const filterPrefix = `${this.queryParamPrefix}.filter.`;
+    const updates: Record<string, string | null> = {};
+    for (const key of this.route.snapshot.queryParamMap.keys) {
+      if (key.startsWith(filterPrefix)) {
+        updates[key] = null;
+      }
+    }
+    for (const [field, value] of Object.entries(
+      this.cleanFilters(this.columnFilters),
+    )) {
+      updates[`${filterPrefix}${encodeURIComponent(field)}`] = value;
+    }
+    return updates;
+  }
+
+  private updateQueryParams(queryParams: Record<string, string | null>): void {
+    void this.router
+      .navigate([], {
+        relativeTo: this.route,
+        queryParams,
+        queryParamsHandling: 'merge',
+        replaceUrl: true,
+      })
+      .catch(error => {
+        console.error(
+          '[taon-datatable] Unable to update table query parameters',
+          error,
+        );
+      });
   }
 
   //#endregion

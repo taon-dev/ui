@@ -74,20 +74,27 @@
   @if (!hideSearch && searchMode === 'advanced' && advancedSearchOpened) {
     <div
       class="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      @for (column of filterableColumns; track column.field) {
-        <mat-form-field
-          appearance="outline"
-          subscriptSizing="dynamic"
-          class="w-full">
-          <mat-label>
-            {{ column.header }}
-          </mat-label>
+      @if (filtersTemplate) {
+        <ng-container
+          [ngTemplateOutlet]="filtersTemplate"
+          [ngTemplateOutletContext]="{ filters: columnFilters }">
+        </ng-container>
+      } @else {
+        @for (column of filterableColumns; track column.field) {
+          <mat-form-field
+            appearance="outline"
+            subscriptSizing="dynamic"
+            class="w-full">
+            <mat-label>
+              {{ column.header }}
+            </mat-label>
 
-          <input
-            matInput
-            [(ngModel)]="columnFilters[$any(column.field)]"
-            (keyup.enter)="applyAdvancedFilters()" />
-        </mat-form-field>
+            <input
+              matInput
+              [(ngModel)]="columnFilters[$any(column.field)]"
+              (keyup.enter)="applyAdvancedFilters()" />
+          </mat-form-field>
+        }
       }
 
       <div

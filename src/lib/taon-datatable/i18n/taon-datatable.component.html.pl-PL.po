@@ -12,14 +12,14 @@ msgstr "Filtry"
 msgid "Add"
 msgstr "Dodać"
 
-#: src/lib/taon-datatable/taon-datatable.component.html:101
+#: src/lib/taon-datatable/taon-datatable.component.html:108
 msgid "Clear"
 msgstr "Jasne"
 
-#: src/lib/taon-datatable/taon-datatable.component.html:111
+#: src/lib/taon-datatable/taon-datatable.component.html:118
 msgid "Apply filters"
 msgstr "Wykorzystanie filtrów"
 
-#: src/lib/taon-datatable/taon-datatable.component.html:128
+#: src/lib/taon-datatable/taon-datatable.component.html:135
 msgid "Loading..."
 msgstr "Ładowanie..."

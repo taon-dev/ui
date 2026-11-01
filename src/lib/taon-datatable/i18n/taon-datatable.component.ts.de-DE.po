@@ -4,14 +4,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/taon-datatable/taon-datatable.component.ts:59
+#: src/lib/taon-datatable/taon-datatable.component.ts:61
 msgid "ID"
 msgstr "Ausweis"
 
-#: src/lib/taon-datatable/taon-datatable.component.ts:63
+#: src/lib/taon-datatable/taon-datatable.component.ts:65
 msgid "NAME"
 msgstr "Name"
 
-#: src/lib/taon-datatable/taon-datatable.component.ts:110
+#: src/lib/taon-datatable/taon-datatable.component.ts:135
 msgid "No records found"
 msgstr ""

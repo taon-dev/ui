@@ -28,6 +28,7 @@ import { Translation } from '@taon-dev/i18n/src';
 import { filter, Subscription } from 'rxjs';
 import { Taon } from 'taon/src';
 
+import { TaonAdminContentFooterService } from './taon-admin-content-footer.service';
 import {
   resolveTaonAdminMenuItem,
   TaonAdminRoute,
@@ -67,12 +68,18 @@ export class TaonAdminLayoutComponent
     inject(TaonAdminMenuContext, { optional: true }) ??
     new TaonAdminMenuContext();
 
+  protected readonly taonAdminContentFooterService = inject(
+    TaonAdminContentFooterService,
+  );
+
   private _routes: Routes = [];
 
   @Input({ required: true })
   set routes(routes: Routes) {
     this._routes = routes.filter(f => !f.redirectTo);
   }
+
+
 
   get routes(): Routes {
     return this._routes;
