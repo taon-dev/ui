@@ -16,10 +16,11 @@ msgstr "Ich benutze Editor:"
 msgid "Code editor"
 msgstr "Code-Editor"
 
-#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:40
-msgid "Close"
-msgstr "Schließen"
-
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:25
 #: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:26
 msgid "Open [[ file ]]:[[ line ]]:[[ column ]]"
 msgstr "Öffnung von Stadtinterpolation0Bereichhalter:Stadtinterpolation1Bereichhalter:Stadtinterpolation2Bereichhalter [[ file ]] [[ line ]] [[ column ]]"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:40
+msgid "Close"
+msgstr "Schließen"

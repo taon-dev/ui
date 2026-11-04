@@ -4,9 +4,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: src/lib/taon-datatable/taon-datatable.component.html:15
+msgid "Search..."
+msgstr "Szukaj..."
+
 #: src/lib/taon-datatable/taon-datatable.component.html:38
 msgid "Filters"
 msgstr "Filtry"
+
+#: src/lib/taon-datatable/taon-datatable.component.html:52
+msgid "Refresh"
+msgstr "Odśwież"
 
 #: src/lib/taon-datatable/taon-datatable.component.html:66
 msgid "Add"

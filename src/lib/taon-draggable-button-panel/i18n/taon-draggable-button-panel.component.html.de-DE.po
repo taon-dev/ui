@@ -4,6 +4,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:58
+msgid "Window mode"
+msgstr "Fenstermodus"
+
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:68
+msgid "Full screen"
+msgstr "Vollbild"
+
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:78
+msgid "Lock full screen"
+msgstr "Vollbild sperren"
+
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:86
+msgid "Unlock"
+msgstr "Entsperren"
+
 #: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:97
 msgid "Close admin panel"
 msgstr "Schließen Sie das Admin-Panel"

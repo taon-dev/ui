@@ -1,0 +1,12 @@
+<div
+  class="loading-content"
+  role="status"
+  aria-label="Loading content"
+  aria-busy="true">
+  @for (line of lines(); track $index) {
+    <div
+      class="skeleton-line"
+      [style.width.%]="line"></div>
+  }
+  <span class="sr-only">{{ t.gettext('Loading content...') }}</span>
+</div>

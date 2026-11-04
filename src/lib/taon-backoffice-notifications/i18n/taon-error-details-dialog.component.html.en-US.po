@@ -16,10 +16,11 @@ msgstr "I am using editor:"
 msgid "Code editor"
 msgstr "Code editor"
 
-#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:40
-msgid "Close"
-msgstr "Close"
-
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:25
 #: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:26
 msgid "Open [[ file ]]:[[ line ]]:[[ column ]]"
 msgstr "Open [[ file ]]:[[ line ]]:[[ column ]]"
+
+#: src/lib/taon-backoffice-notifications/taon-error-details-dialog.component.html:40
+msgid "Close"
+msgstr "Close"
