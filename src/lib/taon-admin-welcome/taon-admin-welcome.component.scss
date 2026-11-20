@@ -1,3 +1,288 @@
 :host {
   display: block;
+  > section {
+    width: 100% !important;
+    margin-bottom: 20px;
+  }
+}
+
+.admin-welcome {
+  position: relative;
+  isolation: isolate;
+  min-height: 380px;
+  color: white;
+
+  background: linear-gradient(120deg, #f47f7c 0%, #f39491 48%, #f7aaa7 100%);
+
+  box-shadow: 0 4px 18px rgba(205, 80, 80, 0.08);
+
+  // #region Decorative background
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.08),
+      transparent 65%
+    );
+  }
+
+  .welcome-curve {
+    position: absolute;
+    z-index: -1;
+
+    width: 110%;
+    height: 170%;
+
+    top: -115%;
+    left: -48%;
+
+    border-radius: 50%;
+
+    background: rgba(235, 88, 88, 0.23);
+
+    transform: rotate(-18deg);
+    pointer-events: none;
+  }
+
+  // #endregion
+
+  // #region Content
+
+  .welcome-content {
+    h1 {
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+    }
+
+    p {
+      line-height: 1.5;
+    }
+  }
+
+  // #endregion
+
+  // #region Button
+
+  .welcome-button {
+    min-height: 54px;
+    padding: 0 28px;
+
+    border-radius: 6px;
+
+    background: white !important;
+    color: #e83e55 !important;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    box-shadow: 0 4px 8px rgba(100, 30, 30, 0.18);
+
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+
+    mat-icon {
+      margin-right: 10px;
+      color: #e83e55;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(100, 30, 30, 0.22);
+    }
+  }
+
+  // #endregion
+
+  // #region Branding
+
+  .welcome-brand {
+    flex-shrink: 0;
+  }
+
+  .welcome-logo {
+    width: clamp(150px, 18vw, 260px);
+    // height: 300px;
+
+    // opacity: 0.3;
+    // filter: brightness(0) invert(1);
+
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  .welcome-words {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 22px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  // #endregion
+
+  // #region Responsive
+
+  @media (max-width: 767px) {
+    min-height: auto;
+
+    .welcome-brand {
+      position: absolute;
+      right: -20px;
+      bottom: -30px;
+
+      opacity: 0.35;
+    }
+
+    .welcome-logo {
+      width: 180px;
+    }
+
+    .welcome-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .welcome-curve {
+      width: 160%;
+      left: -95%;
+    }
+  }
+
+  // #endregion
+}
+
+.admin-stats {
+  // #region Card
+
+  .stat-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    min-height: 104px;
+    padding: 22px;
+
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.035);
+    border-radius: 10px;
+
+    box-shadow: 0 3px 14px rgba(30, 40, 60, 0.045);
+
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(30, 40, 60, 0.09);
+    }
+  }
+
+  // #endregion
+
+  // #region Icon
+
+  .stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 56px;
+    height: 56px;
+
+    border-radius: 9px;
+    background: linear-gradient(135deg, #fbe7e8, #fceff0);
+
+    mat-icon {
+      width: 27px;
+      height: 27px;
+      font-size: 27px;
+      color: #e83e55;
+    }
+  }
+
+  // #endregion
+
+  // #region Content
+
+  .stat-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .stat-value {
+    color: #171923;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+  }
+
+  .stat-label {
+    margin-top: 3px;
+    color: #667085;
+    font-size: 14px;
+  }
+
+  // #endregion
+
+  // #region Trends
+
+  .stat-change {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    align-self: flex-start;
+
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    mat-icon {
+      width: 17px;
+      height: 17px;
+      font-size: 17px;
+    }
+
+    &.positive {
+      color: #16a34a;
+    }
+
+    &.negative {
+      color: #dc2626;
+    }
+
+    &.neutral {
+      color: #64748b;
+    }
+  }
+
+  // #endregion
+
+  // #region Responsive
+
+  @media (max-width: 640px) {
+    .stat-card {
+      min-height: 92px;
+      padding: 16px;
+      gap: 14px;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+    }
+
+    .stat-value {
+      font-size: 23px;
+    }
+  }
+
+  // #endregion
 }
