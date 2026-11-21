@@ -1,8 +1,7 @@
 //#region imports
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterOutlet } from '@angular/router';
 import { Translation } from '@taon-dev/i18n/src';
 import { Taon } from 'taon/src';
 //#endregion
@@ -23,7 +22,7 @@ export interface AdminStat {
   templateUrl: './taon-admin-welcome.component.html',
   styleUrls: ['./taon-admin-welcome.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, RouterOutlet, MatIconModule],
+  imports: [MatButtonModule, MatIconModule],
 })
 export class TaonAdminWelcomeComponent {
   t = t.for(this);

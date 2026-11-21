@@ -1,18 +1,17 @@
 <section class="admin-welcome relative overflow-hidden rounded-lg">
   <div class="welcome-curve"></div>
 
-  <div
-    class="relative z-10 flex flex-col justify-between gap-8 p-8 md:flex-row md:items-center md:p-12">
+  <div class="welcome-layout relative z-10 flex flex-col justify-between gap-8">
     <div class="welcome-content max-w-xl">
       <p class="mb-4 text-sm font-semibold uppercase tracking-wide">
         Welcome to
       </p>
 
-      <h1 class="mb-3 text-4xl font-bold md:text-5xl">Taon Admin</h1>
+      <h1 class="mb-3 font-bold">Taon Admin</h1>
 
       <p class="mb-4 text-xl">Manage your application with ease.</p>
 
-      <p class="mb-7 max-w-md text-base md:text-lg">
+      <p class="welcome-description mb-7 max-w-md">
         A modern, flexible and powerful backoffice, built with Taon.
       </p>
 
@@ -25,14 +24,13 @@
       </button>
     </div>
 
-    <div
-      class="welcome-brand relative flex items-center justify-center gap-8 md:gap-12">
+    <div class="welcome-brand flex items-center justify-center gap-8">
       <img
         src="/src/assets/shared/images/logo-header-cloud-head.png"
         alt=""
         class="welcome-logo" />
 
-      <div class="welcome-words hidden flex-col gap-4 lg:flex">
+      <div class="welcome-words flex-col gap-4">
         <span>Build</span>
         <span>Extend</span>
         <span>Integrate</span>
@@ -42,8 +40,7 @@
   </div>
 </section>
 
-<section
-  class="admin-stats grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+<section class="admin-stats grid gap-5">
   @for (stat of stats(); track stat.id) {
     <div class="stat-card">
       <div class="stat-icon">
