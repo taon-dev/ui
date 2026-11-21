@@ -12,12 +12,20 @@ export class TaonAdminContentFooterService {
     undefined,
   );
 
+  readonly appBottomLeftMenuFooter = signal<TemplateRef<unknown> | undefined>(
+    undefined,
+  );
+
   setAppHeader(template?: TemplateRef<unknown>): void {
     this.appHeader.set(template);
   }
 
   setAppTopLeftTitlebar(template?: TemplateRef<unknown>): void {
     this.appTopLeftTitleBar.set(template);
+  }
+
+  setAppBottomLeftMenuFooter(template?: TemplateRef<unknown>): void {
+    this.appBottomLeftMenuFooter.set(template);
   }
 
   setTemplate(template?: TemplateRef<unknown>): void {
