@@ -19,6 +19,11 @@ export interface TaonAdminMenuCallbacks<TContext = unknown> {
   isVisible?: (params: { context: TContext }) => boolean;
 }
 
+export interface TaonAdminSearchOptions {
+  label?: string | (() => string) | Signal<string>;
+  keywords?: readonly string[];
+}
+
 export interface TaonAdminRouteOptions<
   TContext = unknown,
 > extends TaonAdminMenuCallbacks<TContext> {
@@ -35,6 +40,9 @@ export interface TaonAdminRouteOptions<
   expandable?: boolean;
 
   hideInNavigation?: boolean;
+
+  /** Opt this route into admin page search. */
+  search?: boolean | TaonAdminSearchOptions;
 }
 
 export const TaonBaselineBackofficeOutletName = 'admin';
@@ -57,6 +65,7 @@ export function adminLazyRoute<TContext = unknown>(
     color,
     expandable,
     hideInNavigation,
+    search,
     isDisabled,
     isDisabledTooltip,
     isVisible,
@@ -71,6 +80,7 @@ export function adminLazyRoute<TContext = unknown>(
       icon,
       expandable,
       hideInNavigation,
+      search,
       isDisabled,
       isDisabledTooltip,
       isVisible,

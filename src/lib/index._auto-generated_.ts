@@ -9,6 +9,7 @@ export * from './start-cli';
 export * from './directives/taon-horizontal-wheel-scrolling.directive'; // @browser
 export * from './plugins/ngx-editor-table'; 
 export * from './taon-admin-layout/taon-admin-content-footer.service'; // @browser
+export * from './taon-admin-layout/taon-admin-layout.component.spec'; // @browser
 export * from './taon-admin-layout/taon-admin-layout.component'; // @browser
 export * from './taon-admin-layout/taon-admin-layout.models'; 
 export * from './taon-admin-layout/taon-admin-menu-context'; 

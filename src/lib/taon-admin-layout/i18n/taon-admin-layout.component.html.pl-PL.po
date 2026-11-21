@@ -4,10 +4,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/taon-admin-layout/taon-admin-layout.component.html:15
+#: src/lib/taon-admin-layout/taon-admin-layout.component.html:17
 msgid "Toggle admin menu"
 msgstr "Przełącz menu admin"
 
-#: src/lib/taon-admin-layout/taon-admin-layout.component.html:93
+#: src/lib/taon-admin-layout/taon-admin-layout.component.html:34
+#: src/lib/taon-admin-layout/taon-admin-layout.component.html:42
+#: src/lib/taon-admin-layout/taon-admin-layout.component.html:43
+#: src/lib/taon-admin-layout/taon-admin-layout.component.html:245
+msgid "Search admin pages"
+msgstr ""
+
+#: src/lib/taon-admin-layout/taon-admin-layout.component.html:118
+#: src/lib/taon-admin-layout/taon-admin-layout.component.html:254
 msgid "Loading..."
 msgstr "Ładowanie..."
+
+#: src/lib/taon-admin-layout/taon-admin-layout.component.html:250
+msgid "Start typing to see results"
+msgstr ""
+
+#: src/lib/taon-admin-layout/taon-admin-layout.component.html:258
+msgid "Unable to load search results"
+msgstr ""
+
+#: src/lib/taon-admin-layout/taon-admin-layout.component.html:273
+msgid "No results found"
+msgstr ""
