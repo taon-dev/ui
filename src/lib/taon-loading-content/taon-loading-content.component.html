@@ -1,12 +1,14 @@
 <div
   class="loading-content"
+  [class.loading-content--split]="splitCount() > 0"
   role="status"
   aria-label="Loading content"
   aria-busy="true">
   @for (line of lines(); track $index) {
     <div
       class="skeleton-line"
-      [style.width.%]="line"></div>
+      [style.width.%]="line"
+      aria-hidden="true"></div>
   }
   <span class="sr-only">{{ t.gettext('Loading content...') }}</span>
 </div>

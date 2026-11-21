@@ -28,10 +28,22 @@
   margin-bottom: 0;
 }
 
+.loading-content--split {
+  display: flex;
+  gap: 8px;
+
+  .skeleton-line {
+    flex: 1 1 0;
+    min-width: 0;
+    margin-bottom: 0;
+  }
+}
+
 @keyframes skeleton-shimmer {
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
