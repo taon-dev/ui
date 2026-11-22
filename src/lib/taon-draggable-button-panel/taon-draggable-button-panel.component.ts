@@ -328,6 +328,32 @@ export class TaonDraggableButtonPanelComponent<TContext = unknown>
   }
   //#endregion
 
+  readonly copyStatus = signal('');
+
+  async copyAsImage(element: HTMLElement): Promise<void> {
+    this.copyStatus.set('');
+
+    try {
+      const png = import('html-to-image')
+        .then(({ toBlob }) => toBlob(element, { pixelRatio: 2 }))
+        .then(blob => {
+          if (!blob) {
+            throw new Error('Could not render the panel as a PNG.');
+          }
+          return blob;
+        });
+
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': png }),
+      ]);
+
+      this.copyStatus.set('Image copied.');
+    } catch (error) {
+      console.error('Could not copy the admin panel as an image.', error);
+      this.copyStatus.set('Could not copy image.');
+    }
+  }
+
   // ===========================================================================
   // STATE
   // ===========================================================================

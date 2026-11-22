@@ -66,5 +66,25 @@ prevents menu navigation and expansion. `isDisabledTooltip` is evaluated only
 for disabled items. These options control navigation UI, not access to URLs;
 use Angular route guards for authorization.
 
+### Admin page search
+
+Routes are excluded from search unless explicitly opted in:
+
+```ts
+adminLazyRoute({
+  path: 'users',
+  menuItem: 'Users',
+  search: { label: 'Manage users', keywords: ['accounts', 'people'] },
+  loader: () => import('./users.routes').then(m => m.UsersRoutes),
+});
+```
+
+Use `search: true` to use the resolved `menuItem` (or path-derived label).
+Custom labels also accept functions or signals. Search traverses nested
+`children` and `loadAdminChildren` metadata without loading page components.
+Hidden or disabled routes and their descendants, redirects, wildcards, and
+routes with unresolved path parameters are excluded. Search is navigation UI,
+not an authorization mechanism.
+
 `icon` uses Angular Material's `MatIcon['fontIcon']` type (`string`), supporting
 Material icon ligatures without maintaining a partial list of icon names.

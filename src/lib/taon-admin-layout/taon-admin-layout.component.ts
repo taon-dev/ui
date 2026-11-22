@@ -12,17 +12,20 @@ import {
   OnDestroy,
   OnInit,
   signal,
+  ViewChild,
 } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
+  ActivatedRoute,
   NavigationEnd,
   Route,
   Router,
   RouterLink,
   RouterOutlet,
   Routes,
+  UrlTree,
 } from '@angular/router';
 import { Translation } from '@taon-dev/i18n/src';
 import { filter, Subscription } from 'rxjs';
@@ -32,12 +35,20 @@ import { TaonAdminContentFooterService } from './taon-admin-content-footer.servi
 import {
   resolveTaonAdminMenuItem,
   TaonAdminRoute,
+  TaonAdminSearchOptions,
 } from './taon-admin-layout.models';
 import { TaonAdminMenuContext } from './taon-admin-menu-context';
 import { TaonAdminPageTabsComponent } from './taon-admin-page-tabs.component';
 //#endregion
 
 const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
+
+interface AdminSearchPage {
+  route: Route;
+  ancestors: Route[];
+  segments: string[];
+  options: TaonAdminSearchOptions;
+}
 
 @Component({
   selector: 'taon-admin-layout',
@@ -77,9 +88,15 @@ export class TaonAdminLayoutComponent
   @Input({ required: true })
   set routes(routes: Routes) {
     this._routes = routes.filter(f => !f.redirectTo);
+    this.searchPages.set([]);
+    this.searchLoadVersion++;
+    this.searchLoading.set(false);
+    this.searchLoaded = false;
+    this.searchError.set(false);
+    if (this.searchOpen()) {
+      this.loadSearchPages();
+    }
   }
-
-
 
   get routes(): Routes {
     return this._routes;
@@ -100,6 +117,25 @@ export class TaonAdminLayoutComponent
   protected readonly currentUrl = signal('');
 
   protected readonly loadingRoutes = signal(new Set<Route>());
+
+  protected readonly searchOpen = signal(false);
+
+  protected readonly searchQuery = signal('');
+
+  protected readonly searchLoading = signal(false);
+
+  protected readonly searchError = signal(false);
+
+  private readonly searchPages = signal<AdminSearchPage[]>([]);
+
+  private searchLoaded = false;
+
+  private searchLoadVersion = 0;
+
+  private readonly childrenCache = new WeakMap<Route, Promise<Routes>>();
+
+  @ViewChild('searchInput')
+  private searchInput?: ElementRef<HTMLInputElement>;
 
   protected readonly asideOpened = signal(window.innerWidth >= 768);
 
@@ -151,6 +187,7 @@ export class TaonAdminLayoutComponent
 
   constructor(
     private readonly router: Router,
+    private readonly activatedRoute: ActivatedRoute,
     private readonly hostElement: ElementRef<HTMLElement>,
   ) {}
 
@@ -161,11 +198,14 @@ export class TaonAdminLayoutComponent
   async ngOnInit(): Promise<void> {
     await this.loadCurrentLevel1Route();
 
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(async () => {
-        await this.loadCurrentLevel1Route();
-      });
+    this.sub.add(
+      this.router.events
+        .pipe(filter(event => event instanceof NavigationEnd))
+        .subscribe(async () => {
+          this.searchOpen.set(false);
+          await this.loadCurrentLevel1Route();
+        }),
+    );
   }
 
   ngAfterViewInit(): void {
@@ -208,10 +248,184 @@ export class TaonAdminLayoutComponent
   ngOnDestroy(): void {
     this.resizeObserver?.disconnect();
     this.mutationObserver?.disconnect();
+    this.sub.unsubscribe();
 
     window.removeEventListener('pointermove', this.resize);
 
     window.removeEventListener('pointerup', this.stopResize);
+  }
+
+  //#endregion
+
+  //#region search
+
+  protected openSearch(): void {
+    this.searchOpen.set(true);
+    this.loadSearchPages();
+  }
+
+  protected expandSearch(): void {
+    this.openSearch();
+    setTimeout(() => this.searchInput?.nativeElement.focus());
+  }
+
+  protected closeSearch(): void {
+    this.searchOpen.set(false);
+    this.searchInput?.nativeElement.blur();
+  }
+
+  protected searchFocusOut(event: FocusEvent): void {
+    const next = event.relatedTarget;
+    if (next instanceof Node && this.hostElement.nativeElement.contains(next)) {
+      const element = next instanceof Element ? next : next.parentElement;
+      if (element?.closest('.admin-search, .admin-search-results')) {
+        return;
+      }
+    }
+    this.searchOpen.set(false);
+  }
+
+  protected focusSearchResult(event: PointerEvent): void {
+    if (event.currentTarget instanceof HTMLElement) {
+      event.currentTarget.focus({ preventScroll: true });
+    }
+  }
+
+  protected get searchResults(): {
+    page: AdminSearchPage;
+    label: string;
+    url: UrlTree;
+  }[] {
+    const query = this.searchQuery().trim().toLocaleLowerCase();
+    if (!query) {
+      return [];
+    }
+
+    return this.searchPages()
+      .filter(page =>
+        [...page.ancestors, page.route].every(
+          route =>
+            this.menuContext.isVisible(route) &&
+            !this.menuContext.isDisabled(route),
+        ),
+      )
+      .map(page => ({
+        page,
+        label:
+          resolveTaonAdminMenuItem(page.options.label) ??
+          this.label(page.route),
+      }))
+      .filter(({ page, label }) =>
+        [label, ...(page.options.keywords ?? [])].some(value =>
+          value.toLocaleLowerCase().includes(query),
+        ),
+      )
+      .map(({ page, label }) => ({
+        page,
+        label,
+        url: this.searchUrl(page.segments),
+      }));
+  }
+
+  private loadSearchPages(): void {
+    if (this.searchLoaded || this.searchLoading()) {
+      return;
+    }
+    const version = ++this.searchLoadVersion;
+    this.searchLoading.set(true);
+    this.searchError.set(false);
+    try {
+      const pages = this.collectSearchPages(this.routes, [], []);
+      console.log('pages', pages, this.routes);
+      if (version === this.searchLoadVersion) {
+        this.searchPages.set(pages);
+        this.searchLoaded = true;
+      }
+    } catch (error) {
+      if (version === this.searchLoadVersion) {
+        console.error('Failed to load admin search routes', error);
+        this.searchError.set(true);
+      }
+    } finally {
+      if (version === this.searchLoadVersion) {
+        this.searchLoading.set(false);
+      }
+    }
+  }
+
+  private collectSearchPages(
+    routes: Routes,
+    segments: string[] = [],
+    ancestors: Route[] = [],
+  ): AdminSearchPage[] {
+    return routes.flatMap(route => {
+      if (
+        route.redirectTo !== undefined ||
+        route.data?.['hideInNavigation'] ||
+        route.path === undefined
+      ) {
+        return [];
+      }
+
+      const pathSegments = route.path.split('/').filter(Boolean);
+      if (
+        pathSegments.some(
+          segment => segment === '**' || segment.startsWith(':'),
+        )
+      ) {
+        return [];
+      }
+
+      const nextSegments = [...segments, ...pathSegments];
+      const search: boolean | TaonAdminSearchOptions | undefined =
+        route.data?.['search'];
+
+      const current: AdminSearchPage[] = search
+        ? [
+            {
+              route,
+              ancestors,
+              segments: nextSegments,
+              options: search === true ? {} : search,
+            },
+          ]
+        : [];
+
+      return current.concat(
+        this.collectSearchPages(route.children ?? [], nextSegments, [
+          ...ancestors,
+          route,
+        ]),
+      );
+    });
+  }
+
+  private searchUrl(routeSegments: string[]): UrlTree {
+    const segments = [...this.basePathSegments, ...routeSegments];
+    if (!this.outlet) {
+      return this.router.createUrlTree(['/', ...segments], {
+        queryParamsHandling: 'preserve',
+        preserveFragment: true,
+      });
+    }
+
+    let outletRoute: ActivatedRoute | null = this.activatedRoute;
+    while (outletRoute && outletRoute.outlet !== this.outlet) {
+      outletRoute = outletRoute.parent;
+    }
+    if (!outletRoute?.parent || !segments.length) {
+      throw new Error(`Cannot find active admin outlet "${this.outlet}"`);
+    }
+    const [first, ...rest] = segments;
+    const matrixParams = outletRoute.snapshot.url[0]?.parameters ?? {};
+    return this.router.createUrlTree(
+      [{ outlets: { [this.outlet]: [first, matrixParams, ...rest] } }],
+      {
+        relativeTo: outletRoute.parent,
+        queryParamsHandling: 'preserve',
+        preserveFragment: true,
+      },
+    );
   }
 
   //#endregion
@@ -610,7 +824,15 @@ export class TaonAdminLayoutComponent
     const adminRoute = route as TaonAdminRoute;
 
     if (adminRoute.loadAdminChildren) {
-      return await adminRoute.loadAdminChildren();
+      let loading = this.childrenCache.get(route);
+      if (!loading) {
+        loading = adminRoute.loadAdminChildren().catch(error => {
+          this.childrenCache.delete(route);
+          throw error;
+        });
+        this.childrenCache.set(route, loading);
+      }
+      return await loading;
     }
 
     return [];

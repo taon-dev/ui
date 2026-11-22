@@ -2,7 +2,7 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Translation } from '@taon-dev/i18n/src';
+import { TranslateDirective, Translation } from '@taon-dev/i18n/src';
 import { Taon } from 'taon/src';
 //#endregion
 
@@ -22,7 +22,7 @@ export interface AdminStat {
   templateUrl: './taon-admin-welcome.component.html',
   styleUrls: ['./taon-admin-welcome.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule, TranslateDirective],
 })
 export class TaonAdminWelcomeComponent {
   t = t.for(this);
@@ -32,7 +32,7 @@ export class TaonAdminWelcomeComponent {
   readonly stats = signal<AdminStat[]>([
     {
       id: 'users',
-      label: 'Users',
+      label: this.t.gettext('Users'),
       value: 128,
       icon: 'group',
       change: '+12%',
@@ -40,7 +40,7 @@ export class TaonAdminWelcomeComponent {
     },
     {
       id: 'database',
-      label: 'Database',
+      label: this.t.gettext('Database'),
       value: '2.4 GB',
       icon: 'storage',
       change: '+8%',
@@ -48,7 +48,7 @@ export class TaonAdminWelcomeComponent {
     },
     {
       id: 'requests',
-      label: 'Requests/h',
+      label: this.t.gettext('Requests/h'),
       value: 356,
       icon: 'receipt_long',
       change: '+18%',
@@ -56,7 +56,7 @@ export class TaonAdminWelcomeComponent {
     },
     {
       id: 'uptime',
-      label: 'Uptime',
+      label: this.t.gettext('Uptime'),
       value: '99.9%',
       icon: 'bolt',
       change: '+0.1%',

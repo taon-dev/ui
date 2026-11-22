@@ -3,3 +3,19 @@ msgstr ""
 "Language: de-DE\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/taon-admin-welcome/taon-admin-welcome.component.ts:35
+msgid "Users"
+msgstr ""
+
+#: src/lib/taon-admin-welcome/taon-admin-welcome.component.ts:43
+msgid "Database"
+msgstr ""
+
+#: src/lib/taon-admin-welcome/taon-admin-welcome.component.ts:51
+msgid "Requests/h"
+msgstr ""
+
+#: src/lib/taon-admin-welcome/taon-admin-welcome.component.ts:59
+msgid "Uptime"
+msgstr ""

@@ -4,6 +4,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/taon-admin-welcome/taon-admin-welcome.component.html:3
-msgid "Welcome to Taon Admin"
-msgstr "Willkommen in Taon Admin"
+#: src/lib/taon-admin-welcome/taon-admin-welcome.component.html:12
+msgid "Manage your application with ease."
+msgstr ""
+
+#: src/lib/taon-admin-welcome/taon-admin-welcome.component.html:18
+msgid "A modern, flexible and powerful backoffice, built with Taon."
+msgstr ""
+
+#: src/lib/taon-admin-welcome/taon-admin-welcome.component.html:29
+msgid "Get started"
+msgstr ""
+
+#: src/lib/taon-admin-welcome/taon-admin-welcome.component.html:40
+msgid "Build"
+msgstr ""
+
+#: src/lib/taon-admin-welcome/taon-admin-welcome.component.html:41
+msgid "Extend"
+msgstr ""
+
+#: src/lib/taon-admin-welcome/taon-admin-welcome.component.html:42
+msgid "Integrate"
+msgstr ""
+
+#: src/lib/taon-admin-welcome/taon-admin-welcome.component.html:43
+msgid "Scale"
+msgstr ""

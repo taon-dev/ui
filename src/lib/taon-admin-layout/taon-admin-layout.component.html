@@ -8,7 +8,9 @@
   <!-- HEADER -->
   <!-- ============================================================= -->
 
-  <header class="admin-header">
+  <header
+    class="admin-header"
+    [class.admin-header-search-open]="searchOpen()">
     <button
       mat-icon-button
       type="button"
@@ -20,6 +22,28 @@
 
     <div class="admin-header-content">
       <ng-content select="[header]" />
+    </div>
+
+    <div
+      class="admin-search"
+      (focusout)="searchFocusOut($event)"
+      (keydown.escape)="$event.stopPropagation(); closeSearch()">
+      <button
+        class="admin-search-button"
+        type="button"
+        [attr.aria-label]="t.gettext('Search admin pages')"
+        (click)="expandSearch()">
+        <mat-icon>search</mat-icon>
+      </button>
+      <input
+        #searchInput
+        class="admin-search-input"
+        type="search"
+        [attr.aria-label]="t.gettext('Search admin pages')"
+        [placeholder]="t.gettext('Search admin pages')"
+        [value]="searchQuery()"
+        (input)="searchQuery.set(searchInput.value)"
+        (focus)="openSearch()" />
     </div>
   </header>
 
@@ -90,7 +114,9 @@
 
                   <div class="admin-level2">
                     @if (isLoading(level1)) {
-                      <div class="admin-loading">{{ t.gettext('Loading...') }}</div>
+                      <div class="admin-loading">
+                        {{ t.gettext('Loading...') }}
+                      </div>
                     } @else {
                       @for (
                         level2 of getLevel2Routes(level1);
@@ -198,6 +224,7 @@
 
       <taon-admin-page-tabs
         class="admin-tabs"
+        [class.admin-search-hidden]="searchOpen()"
         [routes]="routes"
         [basePath]="basePath"
         [outlet]="outlet" />
@@ -206,15 +233,57 @@
       <!-- SCROLLABLE CONTENT -->
       <!-- ========================================================= -->
 
-      <div class="admin-content">
+      <div
+        class="admin-content"
+        [class.admin-search-hidden]="searchOpen()">
         <router-outlet />
       </div>
+
+      @if (searchOpen()) {
+        <section
+          class="admin-search-results"
+          [attr.aria-label]="t.gettext('Search admin pages')"
+          (focusout)="searchFocusOut($event)"
+          (keydown.escape)="$event.stopPropagation(); closeSearch()">
+          @if (!searchQuery().trim()) {
+            <div class="admin-search-message">
+              {{ t.gettext('Start typing to see results') }}
+            </div>
+          } @else if (searchLoading()) {
+            <div class="admin-search-message">
+              {{ t.gettext('Loading...') }}
+            </div>
+          } @else if (searchError()) {
+            <div class="admin-search-message">
+              {{ t.gettext('Unable to load search results') }}
+            </div>
+          } @else {
+            @let results = searchResults;
+            @if (results.length) {
+              @for (result of results; track result.page.route) {
+                <a
+                  class="admin-search-result"
+                  [routerLink]="result.url"
+                  (pointerdown)="focusSearchResult($event)"
+                  >{{ result.label }}</a
+                >
+              }
+            } @else {
+              <div class="admin-search-message">
+                {{ t.gettext('No results found') }}
+              </div>
+            }
+          }
+        </section>
+      }
 
       <!-- ========================================================= -->
       <!-- CONTENT FOOTER -->
       <!-- ========================================================= -->
 
-      <footer class="admin-content-footer">
+      <footer
+        class="admin-content-footer"
+        [class.admin-search-hidden]="searchOpen()">
         <ng-container
           [ngTemplateOutlet]="
             taonAdminContentFooterService.currentTemplate()
