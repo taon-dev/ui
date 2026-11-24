@@ -4,26 +4,44 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:57
-msgid "Copy as image"
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:58
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:61
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:59
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:62
+msgid "Restore panel"
 msgstr ""
 
-#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:66
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:58
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:61
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:59
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:62
+msgid "Minimize panel"
+msgstr ""
+
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:72
+msgid "Copy whole website as image"
+msgstr ""
+
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:79
+msgid "Copy Taon Admin as image"
+msgstr ""
+
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:88
 msgid "Window mode"
 msgstr "Fenstermodus"
 
-#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:76
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:98
 msgid "Full screen"
 msgstr "Vollbild"
 
-#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:86
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:108
 msgid "Lock full screen"
 msgstr "Vollbild sperren"
 
-#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:94
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:116
 msgid "Unlock"
 msgstr "Entsperren"
 
-#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:105
+#: src/lib/taon-draggable-button-panel/taon-draggable-button-panel.component.html:127
 msgid "Close admin panel"
 msgstr "Schließen Sie das Admin-Panel"
