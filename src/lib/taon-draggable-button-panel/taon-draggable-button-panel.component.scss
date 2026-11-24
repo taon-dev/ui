@@ -62,3 +62,17 @@
   user-select: none;
   cursor: move;
 }
+
+.taon-draggable-panel.taon-panel-minimized {
+  height: auto;
+  min-height: 0;
+  bottom: auto;
+
+  > .taon-window-bar {
+    flex-shrink: 0;
+  }
+
+  > .taon-panel-content {
+    display: none;
+  }
+}

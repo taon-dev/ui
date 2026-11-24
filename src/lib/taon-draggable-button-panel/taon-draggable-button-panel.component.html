@@ -22,6 +22,7 @@
   [hidden]="currentState() === State.CLICKABLE_BUTTON"
   [cdkDragDisabled]="!isDraggingEnabled()"
   class="taon-draggable-panel"
+  [class.taon-panel-minimized]="minimized()"
   [class.taon-window]="effectiveState() === State.WINDOW"
   [class.taon-window-full]="effectiveState() !== State.WINDOW"
   [class.taon-fullscreen]="
@@ -54,9 +55,30 @@
       <button
         mat-icon-button
         type="button"
-        [matTooltip]="t.gettext('Copy as image')"
-        (click)="copyAsImage(draggableWholePanel)">
+        [matTooltip]="
+          minimized() ? t.gettext('Restore panel') : t.gettext('Minimize panel')
+        "
+        [attr.aria-label]="
+          minimized() ? t.gettext('Restore panel') : t.gettext('Minimize panel')
+        "
+        [attr.aria-expanded]="!minimized()"
+        (click)="toggleMinimized()"
+        (dblclick)="$event.stopPropagation()">
+        <mat-icon>{{ minimized() ? 'expand_more' : 'minimize' }}</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        type="button"
+        [matTooltip]="t.gettext('Copy whole website as image')"
+        (click)="copyAsImage()">
         <mat-icon>image</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        type="button"
+        [matTooltip]="t.gettext('Copy Taon Admin as image')"
+        (click)="copyAsImage(draggableWholePanel)">
+        <mat-icon>picture_in_picture_alt</mat-icon>
       </button>
       @if (!forceFullScreen()) {
         @if (currentState() !== State.WINDOW) {
@@ -110,7 +132,7 @@
     <!-- #endregion -->
   </header>
 
-  <div class="min-h-0 flex-1 overflow-hidden" >
+  <div class="taon-panel-content min-h-0 flex-1 overflow-hidden">
     <ng-content />
   </div>
 </section>
