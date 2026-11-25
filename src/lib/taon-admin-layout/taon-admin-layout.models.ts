@@ -97,50 +97,24 @@ export function adminLazyRoute<TContext = unknown>(
   };
 }
 //#endregion
-
 export function injectNavigateTo() {
   assertInInjectionContext(injectNavigateTo);
 
   const router = inject(Router);
-  const route = inject(ActivatedRoute);
-
-  function findOutlet(
-    snapshot: ActivatedRouteSnapshot,
-    outletName: string,
-  ): ActivatedRouteSnapshot | undefined {
-    if (snapshot.outlet === outletName) {
-      return snapshot;
-    }
-
-    for (const child of snapshot.children) {
-      const found = findOutlet(child, outletName);
-
-      if (found) {
-        return found;
-      }
-    }
-
-    return undefined;
-  }
 
   return (path: string, fragment?: string): Promise<boolean> => {
-    const adminOutlet = findOutlet(router.routerState.snapshot.root, 'admin');
+    const segments = path.split('/').filter(Boolean);
 
     return router.navigate(
       [
         {
           outlets: {
-            primary: path,
-            ...(adminOutlet
-              ? {
-                  admin: adminOutlet.url.map(segment => segment.path),
-                }
-              : {}),
+            primary: segments.length ? segments : null,
           },
         },
       ],
       {
-        relativeTo: route.root,
+        relativeTo: router.routerState.root,
         fragment: fragment?.replace(/^#/, ''),
       },
     );
